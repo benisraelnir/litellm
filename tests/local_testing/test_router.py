@@ -28,12 +28,11 @@ from pydantic import BaseModel
 import litellm
 from litellm import Router
 from litellm.router import Deployment, LiteLLM_Params
-from litellm.types.router import ModelInfo
 from litellm.router_utils.cooldown_handlers import (
     _async_get_cooldown_deployments,
     _get_cooldown_deployments,
 )
-from litellm.types.router import DeploymentTypedDict
+from litellm.types.router import DeploymentTypedDict, ModelInfo
 
 load_dotenv()
 

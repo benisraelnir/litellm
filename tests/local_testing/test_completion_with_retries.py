@@ -1,5 +1,7 @@
-import sys, os
+import os
+import sys
 import traceback
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -8,16 +10,19 @@ import os
 sys.path.insert(
     0, os.path.abspath("../..")
 )  # Adds the parent directory to the system path
-import pytest
 import openai
+import pytest
+
 import litellm
-from litellm import completion_with_retries, completion, acompletion_with_retries
 from litellm import (
     AuthenticationError,
     BadRequestError,
+    OpenAIError,
     RateLimitError,
     ServiceUnavailableError,
-    OpenAIError,
+    acompletion_with_retries,
+    completion,
+    completion_with_retries,
 )
 
 user_message = "Hello, whats the weather in San Francisco??"
@@ -53,7 +58,8 @@ def test_completion_with_0_num_retries():
 @pytest.mark.asyncio
 @pytest.mark.parametrize("sync_mode", [True, False])
 async def test_completion_with_retry_policy(sync_mode):
-    from unittest.mock import patch, MagicMock, AsyncMock
+    from unittest.mock import AsyncMock, MagicMock, patch
+
     from litellm.types.router import RetryPolicy
 
     retry_number = 1
@@ -92,7 +98,8 @@ async def test_completion_with_retry_policy_no_error(sync_mode):
     """
     Test that the completion function does not throw an error when the retry policy is set
     """
-    from unittest.mock import patch, MagicMock, AsyncMock
+    from unittest.mock import AsyncMock, MagicMock, patch
+
     from litellm.types.router import RetryPolicy
 
     retry_number = 1
@@ -121,7 +128,7 @@ async def test_completion_with_retries(sync_mode):
     """
     If completion_with_retries is called with num_retries=3, and max_retries=0, then litellm.completion should receive num_retries , max_retries=0
     """
-    from unittest.mock import patch, MagicMock, AsyncMock
+    from unittest.mock import AsyncMock, MagicMock, patch
 
     if sync_mode:
         target_function = "completion"

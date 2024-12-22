@@ -1106,9 +1106,7 @@ def test_completion_claude_stream_bad_key():
 
 @pytest.mark.parametrize("provider", ["vertex_ai_beta"])  # ""
 def test_vertex_ai_stream(provider):
-    from test_amazing_vertex_completion import (
-        load_vertex_ai_credentials,
-    )
+    from test_amazing_vertex_completion import load_vertex_ai_credentials
 
     load_vertex_ai_credentials()
     litellm.set_verbose = True
@@ -3924,9 +3922,7 @@ def test_unit_test_perplexity_citations_chunk():
 @pytest.mark.flaky(retries=3, delay=1)
 def test_aastreaming_tool_calls_valid_json_str(model):
     if "vertex_ai" in model:
-        from test_amazing_vertex_completion import (
-            load_vertex_ai_credentials,
-        )
+        from test_amazing_vertex_completion import load_vertex_ai_credentials
 
         load_vertex_ai_credentials()
         vertex_location = "us-east5"

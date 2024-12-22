@@ -1,15 +1,17 @@
 # What is this?
 ## Unit tests for 'docker/entrypoint.sh'
 
-import pytest
-import sys
 import os
+import sys
+
+import pytest
 
 sys.path.insert(
     0, os.path.abspath("../")
 )  # Adds the parent directory to the system path
-import litellm
 import subprocess
+
+import litellm
 
 
 @pytest.mark.skip(reason="local test")
@@ -17,9 +19,7 @@ def test_decrypt_and_reset_env():
     os.environ["DATABASE_URL"] = (
         "aws_kms/AQICAHgwddjZ9xjVaZ9CNCG8smFU6FiQvfdrjL12DIqi9vUAQwHwF6U7caMgHQa6tK+TzaoMAAAAzjCBywYJKoZIhvcNAQcGoIG9MIG6AgEAMIG0BgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDCmu+DVeKTm5tFZu6AIBEICBhnOFQYviL8JsciGk0bZsn9pfzeYWtNkVXEsl01AdgHBqT9UOZOI4ZC+T3wO/fXA7wdNF4o8ASPDbVZ34ZFdBs8xt4LKp9niufL30WYBkuuzz89ztly0jvE9pZ8L6BMw0ATTaMgIweVtVSDCeCzEb5PUPyxt4QayrlYHBGrNH5Aq/axFTe0La"
     )
-    from litellm.secret_managers.aws_secret_manager import (
-        decrypt_and_reset_env_var,
-    )
+    from litellm.secret_managers.aws_secret_manager import decrypt_and_reset_env_var
 
     decrypt_and_reset_env_var()
 

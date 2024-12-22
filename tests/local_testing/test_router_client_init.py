@@ -18,9 +18,10 @@ from openai.lib.azure import OpenAIError
 sys.path.insert(
     0, os.path.abspath("../..")
 )  # Adds the parent directory to the system path
+from unittest.mock import ANY
+
 import litellm
 from litellm import APIConnectionError, Router
-from unittest.mock import ANY
 
 
 async def test_router_init():

@@ -2,7 +2,7 @@ import json
 import os
 import sys
 from datetime import datetime
-from unittest.mock import AsyncMock, patch, MagicMock
+from unittest.mock import AsyncMock, MagicMock, patch
 
 sys.path.insert(
     0, os.path.abspath("../..")
@@ -11,11 +11,11 @@ sys.path.insert(
 
 import httpx
 import pytest
+from base_llm_unit_tests import BaseLLMChatTest
 from respx import MockRouter
 
 import litellm
 from litellm import Choices, Message, ModelResponse
-from base_llm_unit_tests import BaseLLMChatTest
 
 
 @pytest.mark.parametrize("model", ["o1-preview", "o1-mini", "o1"])
@@ -27,6 +27,7 @@ async def test_o1_handle_system_role(model):
     - role 'system' is translated to 'user'
     """
     from openai import AsyncOpenAI
+
     from litellm.utils import supports_system_messages
 
     os.environ["LITELLM_LOCAL_MODEL_COST_MAP"] = "True"
@@ -80,8 +81,9 @@ async def test_o1_handle_tool_calling_optional_params(
     - role 'system' is translated to 'user'
     """
     from openai import AsyncOpenAI
-    from litellm.utils import ProviderConfigManager
+
     from litellm.types.utils import LlmProviders
+    from litellm.utils import ProviderConfigManager
 
     os.environ["LITELLM_LOCAL_MODEL_COST_MAP"] = "True"
     litellm.model_cost = litellm.get_model_cost_map(url="")

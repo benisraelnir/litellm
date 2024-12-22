@@ -7,12 +7,12 @@ sys.path.insert(
     0, os.path.abspath("../../")
 )  # Adds the parent directory to the system path
 
-import litellm
 import pytest
 
+import litellm
 from litellm.litellm_core_utils.llm_response_utils.get_headers import (
-    get_response_headers,
     _get_llm_provider_headers,
+    get_response_headers,
 )
 
 

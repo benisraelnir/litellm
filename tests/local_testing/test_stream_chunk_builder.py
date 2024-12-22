@@ -3,10 +3,11 @@ import os
 import sys
 import time
 import traceback
+from typing import List
 
 import pytest
-from typing import List
-from litellm.types.utils import StreamingChoices, ChatCompletionAudioResponse
+
+from litellm.types.utils import ChatCompletionAudioResponse, StreamingChoices
 
 
 def check_non_streaming_response(completion):
@@ -24,10 +25,10 @@ sys.path.insert(
 import os
 
 import dotenv
+import stream_chunk_testdata
 from openai import OpenAI
 
 import litellm
-import stream_chunk_testdata
 from litellm import completion, stream_chunk_builder
 
 dotenv.load_dotenv()
@@ -685,9 +686,10 @@ def test_stream_chunk_builder_openai_prompt_caching():
 
 
 def test_stream_chunk_builder_openai_audio_output_usage():
-    from pydantic import BaseModel
-    from openai import OpenAI
     from typing import Optional
+
+    from openai import OpenAI
+    from pydantic import BaseModel
 
     client = OpenAI(
         # This is the default and can be omitted
@@ -733,9 +735,7 @@ def test_stream_chunk_builder_openai_audio_output_usage():
 
 
 def test_stream_chunk_builder_empty_initial_chunk():
-    from litellm.litellm_core_utils.streaming_chunk_builder_utils import (
-        ChunkProcessor,
-    )
+    from litellm.litellm_core_utils.streaming_chunk_builder_utils import ChunkProcessor
 
     chunks = [
         {"id": ""},

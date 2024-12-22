@@ -1,6 +1,7 @@
-from openai import AsyncOpenAI
 import os
+
 import pytest
+from openai import AsyncOpenAI
 
 
 @pytest.mark.asyncio

@@ -20,12 +20,11 @@ from typing import Optional
 from unittest.mock import MagicMock, patch
 
 import pytest
+from base_llm_unit_tests import BaseLLMChatTest
+from httpx import Headers
 
 import litellm
-
 from litellm.llms.anthropic.common_utils import process_anthropic_headers
-from httpx import Headers
-from base_llm_unit_tests import BaseLLMChatTest
 
 
 class TestMistralCompletion(BaseLLMChatTest):

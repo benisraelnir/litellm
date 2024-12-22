@@ -22,8 +22,9 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from fastapi import Request
-from fastapi.routing import APIRoute
 from fastapi.responses import Response
+from fastapi.routing import APIRoute
+
 import litellm
 from litellm.caching.caching import DualCache
 from litellm.proxy._types import LiteLLM_JWTAuth, LiteLLM_UserTable, LiteLLMRoutes
@@ -1031,12 +1032,13 @@ def test_get_public_key_from_jwk_url():
 
 @pytest.mark.asyncio
 async def test_end_user_jwt_auth(monkeypatch):
+    import json
+
     import litellm
-    from litellm.proxy.auth.handle_jwt import JWTHandler
     from litellm.caching import DualCache
     from litellm.proxy._types import LiteLLM_JWTAuth
+    from litellm.proxy.auth.handle_jwt import JWTHandler
     from litellm.proxy.proxy_server import user_api_key_auth
-    import json
 
     monkeypatch.delenv("JWT_AUDIENCE", None)
     jwt_handler = JWTHandler()

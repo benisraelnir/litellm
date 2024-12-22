@@ -2,8 +2,8 @@ import os
 import sys
 import traceback
 from unittest import mock
-import pytest
 
+import pytest
 from dotenv import load_dotenv
 
 import litellm.proxy

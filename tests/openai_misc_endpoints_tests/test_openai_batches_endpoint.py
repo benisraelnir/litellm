@@ -1,15 +1,16 @@
 # What this tests ?
 ## Tests /batches endpoints
-import pytest
 import asyncio
-import aiohttp, openai
-from openai import OpenAI, AsyncOpenAI
-from typing import Optional, List, Union
-from test_openai_files_endpoints import upload_file, delete_file
 import os
 import sys
 import time
+from typing import List, Optional, Union
 
+import aiohttp
+import openai
+import pytest
+from openai import AsyncOpenAI, OpenAI
+from test_openai_files_endpoints import delete_file, upload_file
 
 BASE_URL = "http://localhost:4000"  # Replace with your actual base URL
 API_KEY = "sk-1234"  # Replace with your actual API key

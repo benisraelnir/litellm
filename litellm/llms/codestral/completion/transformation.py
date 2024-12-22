@@ -5,6 +5,7 @@ import litellm
 from litellm.llms.openai.completion.transformation import OpenAITextCompletionConfig
 from litellm.types.llms.databricks import GenericStreamingChunk
 
+
 class CodestralTextCompletionConfig(OpenAITextCompletionConfig):
     """
     Reference: https://docs.mistral.ai/api/#operation/createFIMCompletion

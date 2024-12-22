@@ -9,15 +9,16 @@ sys.path.insert(
 )  # Adds the parent directory to the system path
 
 
+import base64
+
 import httpx
 import pytest
+import requests
 from respx import MockRouter
 
 import litellm
 from litellm import Choices, Message, ModelResponse
-from litellm.types.utils import StreamingChoices, ChatCompletionAudioResponse
-import base64
-import requests
+from litellm.types.utils import ChatCompletionAudioResponse, StreamingChoices
 
 
 def check_non_streaming_response(completion):

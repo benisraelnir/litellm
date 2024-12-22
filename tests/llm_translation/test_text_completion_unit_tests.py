@@ -2,11 +2,11 @@ import json
 import os
 import sys
 from datetime import datetime
-from unittest.mock import AsyncMock
-import pytest
+from unittest.mock import AsyncMock, MagicMock, patch
+
 import httpx
+import pytest
 from respx import MockRouter
-from unittest.mock import patch, MagicMock, AsyncMock
 
 sys.path.insert(
     0, os.path.abspath("../..")
@@ -77,7 +77,7 @@ def test_convert_dict_to_text_completion_response():
 async def test_huggingface_text_completion_logprobs():
     """Test text completion with Hugging Face, focusing on logprobs structure"""
     litellm.set_verbose = True
-    from litellm.llms.custom_httpx.http_handler import HTTPHandler, AsyncHTTPHandler
+    from litellm.llms.custom_httpx.http_handler import AsyncHTTPHandler, HTTPHandler
 
     mock_response = [
         {

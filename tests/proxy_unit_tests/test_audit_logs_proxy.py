@@ -1,5 +1,7 @@
+import io
 import os
 import sys
+import time
 import traceback
 import uuid
 from datetime import datetime
@@ -7,11 +9,6 @@ from datetime import datetime
 from dotenv import load_dotenv
 from fastapi import Request
 from fastapi.routing import APIRoute
-
-
-import io
-import os
-import time
 
 # this file is to test litellm/proxy
 
@@ -23,11 +20,12 @@ import logging
 
 load_dotenv()
 
-import pytest
 import uuid
+
+import pytest
+
 import litellm
 from litellm._logging import verbose_proxy_logger
-
 from litellm.proxy.proxy_server import (
     LitellmUserRoles,
     audio_transcriptions,
@@ -39,17 +37,17 @@ from litellm.proxy.proxy_server import (
     moderations,
     user_api_key_auth,
 )
-
 from litellm.proxy.utils import PrismaClient, ProxyLogging, hash_token, update_spend
 
 verbose_proxy_logger.setLevel(level=logging.DEBUG)
 
+from unittest.mock import AsyncMock, patch
+
 from starlette.datastructures import URL
 
-from litellm.proxy.management_helpers.audit_logs import create_audit_log_for_update
-from litellm.proxy._types import LiteLLM_AuditLogs, LitellmTableNames
 from litellm.caching.caching import DualCache
-from unittest.mock import patch, AsyncMock
+from litellm.proxy._types import LiteLLM_AuditLogs, LitellmTableNames
+from litellm.proxy.management_helpers.audit_logs import create_audit_log_for_update
 
 proxy_logging_obj = ProxyLogging(user_api_key_cache=DualCache())
 import json

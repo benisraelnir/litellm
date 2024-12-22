@@ -1,8 +1,9 @@
 # What is this?
 ## This tests if the proxy fallbacks work as expected
-import pytest
 import asyncio
+
 import aiohttp
+import pytest
 from large_text import text
 
 

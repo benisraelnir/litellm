@@ -26,10 +26,13 @@ import asyncio
 import logging
 
 import pytest
+from starlette.datastructures import URL
 
 import litellm
 from litellm._logging import verbose_proxy_logger
 from litellm.proxy.auth.auth_checks import get_user_object
+from litellm.proxy.management_endpoints.customer_endpoints import new_end_user
+from litellm.proxy.management_endpoints.internal_user_endpoints import new_user
 from litellm.proxy.management_endpoints.key_management_endpoints import (
     delete_key_fn,
     generate_key_fn,
@@ -38,12 +41,10 @@ from litellm.proxy.management_endpoints.key_management_endpoints import (
     regenerate_key_fn,
     update_key_fn,
 )
-from litellm.proxy.management_endpoints.internal_user_endpoints import new_user
 from litellm.proxy.management_endpoints.organization_endpoints import (
     new_organization,
     organization_member_add,
 )
-
 from litellm.proxy.management_endpoints.team_endpoints import (
     new_team,
     team_info,
@@ -60,20 +61,15 @@ from litellm.proxy.proxy_server import (
     moderations,
     user_api_key_auth,
 )
-from litellm.proxy.management_endpoints.customer_endpoints import (
-    new_end_user,
-)
 from litellm.proxy.spend_tracking.spend_management_endpoints import (
     global_spend,
+    global_spend_keys,
     global_spend_logs,
     global_spend_models,
-    global_spend_keys,
     spend_key_fn,
     spend_user_fn,
     view_spend_logs,
 )
-from starlette.datastructures import URL
-
 from litellm.proxy.utils import PrismaClient, ProxyLogging, hash_token, update_spend
 
 verbose_proxy_logger.setLevel(level=logging.DEBUG)

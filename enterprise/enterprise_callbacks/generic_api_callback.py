@@ -3,19 +3,15 @@
 #### What this does ####
 #    On success, logs events to Promptlayer
 import os
-
-
+import traceback
+import uuid
 from typing import Optional
 
-import traceback
-
+import litellm
+from litellm._logging import print_verbose, verbose_logger
 
 #### What this does ####
 #    On success + failure, log events to Supabase
-
-import litellm
-import uuid
-from litellm._logging import print_verbose, verbose_logger
 
 
 class GenericAPILogger:

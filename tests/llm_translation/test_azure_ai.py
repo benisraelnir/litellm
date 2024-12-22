@@ -2,18 +2,18 @@
 ## Unit tests for Azure AI integration
 
 import asyncio
+import json
 import os
 import sys
 import traceback
 
+import httpx
 from dotenv import load_dotenv
+from respx import MockRouter
 
 import litellm.types
 import litellm.types.utils
 from litellm.llms.anthropic.chat import ModelResponseIterator
-import httpx
-import json
-from respx import MockRouter
 
 load_dotenv()
 import io

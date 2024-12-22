@@ -4,8 +4,9 @@ redeploy_proxy.py
 """
 
 import os
-import requests
 import time
+
+import requests
 
 # send a get request to this endpoint
 deploy_hook1 = os.getenv("LOAD_TEST_REDEPLOY_URL1")

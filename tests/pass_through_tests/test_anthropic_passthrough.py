@@ -3,10 +3,11 @@ This test ensures that the proxy can passthrough anthropic requests
 
 """
 
-import pytest
-import anthropic
-import aiohttp
 import asyncio
+
+import aiohttp
+import anthropic
+import pytest
 
 client = anthropic.Anthropic(
     base_url="http://0.0.0.0:4000/anthropic", api_key="sk-1234"

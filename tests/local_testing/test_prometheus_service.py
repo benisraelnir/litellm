@@ -1,19 +1,22 @@
 # What is this?
 ## Unit Tests for prometheus service monitoring
 
+import asyncio
+import io
 import json
-import sys
 import os
-import io, asyncio
+import sys
 
 sys.path.insert(0, os.path.abspath("../.."))
+from unittest.mock import AsyncMock, patch
+
 import pytest
-from litellm import acompletion, Cache
+
+import litellm
+from litellm import Cache, acompletion
 from litellm._service_logger import ServiceLogging
 from litellm.integrations.prometheus_services import PrometheusServicesLogger
 from litellm.proxy.utils import ServiceTypes
-from unittest.mock import patch, AsyncMock
-import litellm
 
 """
 - Check if it receives a call when redis is used 

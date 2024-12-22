@@ -2,19 +2,21 @@
 Test TogetherAI LLM
 """
 
-from base_llm_unit_tests import BaseLLMChatTest
 import json
 import os
 import sys
 from datetime import datetime
 from unittest.mock import AsyncMock
 
+from base_llm_unit_tests import BaseLLMChatTest
+
 sys.path.insert(
     0, os.path.abspath("../..")
 )  # Adds the parent directory to the system path
 
-import litellm
 import pytest
+
+import litellm
 
 
 class TestTogetherAI(BaseLLMChatTest):

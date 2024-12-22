@@ -830,8 +830,8 @@ async def test_langfuse_trace_id():
     """
     - Unit test for `_add_langfuse_trace_id_to_alert` function in slack_alerting.py
     """
-    from litellm.litellm_core_utils.litellm_logging import Logging
     from litellm.integrations.SlackAlerting.utils import _add_langfuse_trace_id_to_alert
+    from litellm.litellm_core_utils.litellm_logging import Logging
 
     litellm.success_callback = ["langfuse"]
 

@@ -25,10 +25,10 @@ import traceback
 import uuid
 from datetime import datetime, timezone
 
+import httpx
 from dotenv import load_dotenv
 from fastapi import Request
 from fastapi.routing import APIRoute
-import httpx
 
 load_dotenv()
 import io
@@ -47,12 +47,13 @@ import pytest
 
 import litellm
 from litellm._logging import verbose_proxy_logger
+from litellm.proxy.auth.auth_checks import get_key_object
+from litellm.proxy.management_endpoints.customer_endpoints import new_end_user
 from litellm.proxy.management_endpoints.internal_user_endpoints import (
     new_user,
     user_info,
     user_update,
 )
-from litellm.proxy.auth.auth_checks import get_key_object
 from litellm.proxy.management_endpoints.key_management_endpoints import (
     delete_key_fn,
     generate_key_fn,
@@ -77,9 +78,6 @@ from litellm.proxy.proxy_server import (
     model_list,
     moderations,
     user_api_key_auth,
-)
-from litellm.proxy.management_endpoints.customer_endpoints import (
-    new_end_user,
 )
 from litellm.proxy.spend_tracking.spend_management_endpoints import (
     global_spend,
@@ -3403,12 +3401,11 @@ async def test_key_generate_with_secret_manager_call(prisma_client):
     delete the key
     assert it is deleted from the secret manager
     """
-    from litellm.secret_managers.aws_secret_manager_v2 import AWSSecretsManagerV2
-    from litellm.proxy._types import KeyManagementSystem, KeyManagementSettings
-
+    from litellm.proxy._types import KeyManagementSettings, KeyManagementSystem
     from litellm.proxy.hooks.key_management_event_hooks import (
         LITELLM_PREFIX_STORED_VIRTUAL_KEYS,
     )
+    from litellm.secret_managers.aws_secret_manager_v2 import AWSSecretsManagerV2
 
     litellm.set_verbose = True
 

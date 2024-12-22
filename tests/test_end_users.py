@@ -1,12 +1,13 @@
 # What is this?
 ## Unit tests for the /end_users/* endpoints
-import pytest
 import asyncio
-import aiohttp
 import time
 import uuid
-from openai import AsyncOpenAI
 from typing import Optional
+
+import aiohttp
+import pytest
+from openai import AsyncOpenAI
 
 """
 - `/end_user/new` 

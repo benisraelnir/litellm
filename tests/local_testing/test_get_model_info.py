@@ -7,11 +7,12 @@ import traceback
 sys.path.insert(
     0, os.path.abspath("../..")
 )  # Adds the parent directory to the system path
+from unittest.mock import AsyncMock, MagicMock, patch
+
 import pytest
 
 import litellm
 from litellm import get_model_info
-from unittest.mock import AsyncMock, MagicMock, patch
 
 
 def test_get_model_info_simple_model_name():

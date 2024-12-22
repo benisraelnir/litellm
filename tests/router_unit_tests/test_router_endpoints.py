@@ -1,14 +1,15 @@
-import sys
 import os
+import sys
 import traceback
+from datetime import datetime
+
 from dotenv import load_dotenv
 from fastapi import Request
-from datetime import datetime
 
 sys.path.insert(
     0, os.path.abspath("../..")
 )  # Adds the parent directory to the system path
-from litellm import Router, CustomLogger
+from litellm import CustomLogger, Router
 
 # Get the current directory of the file being run
 pwd = os.path.dirname(os.path.realpath(__file__))
@@ -17,10 +18,12 @@ print(pwd)
 file_path = os.path.join(pwd, "gettysburg.wav")
 
 audio_file = open(file_path, "rb")
-from pathlib import Path
-import litellm
-import pytest
 import asyncio
+from pathlib import Path
+
+import pytest
+
+import litellm
 
 
 @pytest.fixture

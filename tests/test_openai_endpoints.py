@@ -1,11 +1,13 @@
 # What this tests ?
 ## Tests /chat/completions by generating a key and then making a chat completions request
-import pytest
 import asyncio
-import aiohttp, openai
-from openai import OpenAI, AsyncOpenAI
-from typing import Optional, List, Union
 import uuid
+from typing import List, Optional, Union
+
+import aiohttp
+import openai
+import pytest
+from openai import AsyncOpenAI, OpenAI
 
 LITELLM_MASTER_KEY = "sk-1234"
 

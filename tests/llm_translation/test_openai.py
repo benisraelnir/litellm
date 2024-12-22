@@ -9,14 +9,15 @@ sys.path.insert(
 )  # Adds the parent directory to the system path
 
 
+import asyncio
+
 import httpx
 import pytest
+from base_llm_unit_tests import BaseLLMChatTest
 from respx import MockRouter
 
 import litellm
 from litellm import Choices, Message, ModelResponse
-from base_llm_unit_tests import BaseLLMChatTest
-import asyncio
 
 
 def test_openai_prediction_param():
@@ -130,9 +131,10 @@ async def test_openai_prediction_param_with_caching():
     """
     Tests using `prediction` parameter with caching
     """
-    from litellm.caching.caching import LiteLLMCacheType
     import logging
+
     from litellm._logging import verbose_logger
+    from litellm.caching.caching import LiteLLMCacheType
 
     verbose_logger.setLevel(logging.DEBUG)
     import time
@@ -209,6 +211,7 @@ async def test_vision_with_custom_model():
 
     """
     import base64
+
     import requests
     from openai import AsyncOpenAI
 

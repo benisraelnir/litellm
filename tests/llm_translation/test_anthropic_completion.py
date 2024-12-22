@@ -23,22 +23,22 @@ from typing import Optional
 from unittest.mock import MagicMock, patch
 
 import pytest
+from base_llm_unit_tests import BaseLLMChatTest
+from httpx import Headers
 
 import litellm
 from litellm import (
     AnthropicConfig,
+    AnthropicExperimentalPassThroughConfig,
     Router,
     adapter_completion,
-    AnthropicExperimentalPassThroughConfig,
 )
 from litellm.adapters.anthropic_adapter import anthropic_adapter
-from litellm.types.llms.anthropic import AnthropicResponse
-from litellm.types.utils import GenericStreamingChunk, ChatCompletionToolCallChunk
-from litellm.types.llms.openai import ChatCompletionToolCallFunctionChunk
-from litellm.llms.anthropic.common_utils import process_anthropic_headers
 from litellm.llms.anthropic.chat.handler import AnthropicChatCompletion
-from httpx import Headers
-from base_llm_unit_tests import BaseLLMChatTest
+from litellm.llms.anthropic.common_utils import process_anthropic_headers
+from litellm.types.llms.anthropic import AnthropicResponse
+from litellm.types.llms.openai import ChatCompletionToolCallFunctionChunk
+from litellm.types.utils import ChatCompletionToolCallChunk, GenericStreamingChunk
 
 
 def test_anthropic_completion_messages_translation():
@@ -691,6 +691,7 @@ class TestAnthropicCompletion(BaseLLMChatTest):
         """
         litellm.set_verbose = True
         from pydantic import BaseModel
+
         from litellm.utils import supports_response_schema
 
         os.environ["LITELLM_LOCAL_MODEL_COST_MAP"] = "True"
@@ -828,8 +829,9 @@ def test_convert_tool_response_to_message_no_arguments():
 
 
 def test_anthropic_tool_with_image():
-    from litellm.litellm_core_utils.prompt_templates.factory import prompt_factory
     import json
+
+    from litellm.litellm_core_utils.prompt_templates.factory import prompt_factory
 
     b64_data = "iVBORw0KGgoAAAANSUhEu6U3//C9t/fKv5wDgpP1r5796XwC4zyH1D565bHGDqbY85AMb0nIQe+u3J390Xbtb9XgXxcK0/aqRXpdYcwgARbCN03FJk"
     image_url = f"data:image/png;base64,{b64_data}"

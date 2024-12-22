@@ -19,6 +19,7 @@ sys.path.insert(
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
+
 import litellm
 from litellm import Router, mock_completion
 from litellm.caching.caching import DualCache
@@ -298,9 +299,9 @@ async def test_presidio_pii_masking_logging_output_only_logged_response_guardrai
     import litellm
     from litellm.proxy.guardrails.init_guardrails import initialize_guardrails
     from litellm.types.guardrails import (
+        GuardrailEventHooks,
         GuardrailItem,
         GuardrailItemSpec,
-        GuardrailEventHooks,
     )
 
     litellm.set_verbose = True

@@ -21,6 +21,8 @@ sys.path.insert(
 from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
+from base_llm_unit_tests import BaseLLMChatTest
+from base_rerank_unit_tests import BaseLLMRerankTest
 
 import litellm
 from litellm import (
@@ -31,11 +33,9 @@ from litellm import (
     completion_cost,
     embedding,
 )
+from litellm.litellm_core_utils.prompt_templates.factory import _bedrock_tools_pt
 from litellm.llms.bedrock.chat import BedrockLLM
 from litellm.llms.custom_httpx.http_handler import AsyncHTTPHandler, HTTPHandler
-from litellm.litellm_core_utils.prompt_templates.factory import _bedrock_tools_pt
-from base_llm_unit_tests import BaseLLMChatTest
-from base_rerank_unit_tests import BaseLLMRerankTest
 
 # litellm.num_retries = 3
 litellm.cache = None
@@ -1604,10 +1604,10 @@ def test_bedrock_completion_test_3():
     """
     Check if content in tool result is formatted correctly
     """
-    from litellm.types.utils import ChatCompletionMessageToolCall, Function, Message
     from litellm.litellm_core_utils.prompt_templates.factory import (
         _bedrock_converse_messages_pt,
     )
+    from litellm.types.utils import ChatCompletionMessageToolCall, Function, Message
 
     messages = [
         {
@@ -2019,8 +2019,9 @@ def test_bedrock_base_model_helper():
     ],
 )
 def test_bedrock_prompt_caching_message(messages, expected_cache_control):
-    import litellm
     import json
+
+    import litellm
 
     transformed_messages = litellm.AmazonConverseConfig()._transform_request(
         model="bedrock/anthropic.claude-3-5-haiku-20241022-v1:0",

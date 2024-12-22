@@ -1,22 +1,24 @@
 import asyncio
-import httpx
 import json
-import pytest
+import os
 import sys
 from typing import Any, Dict, List, Optional
 from unittest.mock import MagicMock, Mock, patch
-import os
+
+import httpx
+import pytest
 
 sys.path.insert(
     0, os.path.abspath("../..")
 )  # Adds the parent directory to the system path
+from openai.types.image import Image
+
 import litellm
 from litellm.exceptions import BadRequestError
-from litellm.llms.custom_httpx.http_handler import AsyncHTTPHandler, HTTPHandler
-from litellm.utils import CustomStreamWrapper
-from openai.types.image import Image
 from litellm.integrations.custom_logger import CustomLogger
+from litellm.llms.custom_httpx.http_handler import AsyncHTTPHandler, HTTPHandler
 from litellm.types.utils import StandardLoggingPayload
+from litellm.utils import CustomStreamWrapper
 
 
 class TestCustomLogger(CustomLogger):

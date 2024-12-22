@@ -12,30 +12,28 @@ sys.path.insert(
 )  # Adds the parent directory to the system path
 import asyncio
 import hashlib
+import logging
 import random
+from datetime import datetime, timedelta
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
 import litellm
 from litellm import aembedding, completion, embedding
-from litellm.caching.caching import Cache
-
-from unittest.mock import AsyncMock, patch, MagicMock
-from litellm.caching.caching_handler import LLMCachingHandler, CachingHandlerResponse
-from litellm.caching.caching import LiteLLMCacheType
-from litellm.types.utils import CallTypes
+from litellm._logging import verbose_logger
+from litellm.caching.caching import Cache, LiteLLMCacheType
+from litellm.caching.caching_handler import CachingHandlerResponse, LLMCachingHandler
+from litellm.litellm_core_utils.litellm_logging import Logging as LiteLLMLogging
 from litellm.types.rerank import RerankResponse
 from litellm.types.utils import (
-    ModelResponse,
+    CallTypes,
+    Embedding,
     EmbeddingResponse,
+    ModelResponse,
     TextCompletionResponse,
     TranscriptionResponse,
-    Embedding,
 )
-from datetime import timedelta, datetime
-from litellm.litellm_core_utils.litellm_logging import Logging as LiteLLMLogging
-from litellm._logging import verbose_logger
-import logging
 
 
 def setup_cache():

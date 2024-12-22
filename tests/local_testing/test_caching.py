@@ -13,18 +13,17 @@ sys.path.insert(
     0, os.path.abspath("../..")
 )  # Adds the parent directory to the system path
 import asyncio
+import datetime
 import hashlib
 import random
+from datetime import timedelta
+from unittest.mock import AsyncMock, MagicMock, call, patch
 
 import pytest
 
 import litellm
 from litellm import aembedding, completion, embedding
 from litellm.caching.caching import Cache
-
-from unittest.mock import AsyncMock, patch, MagicMock, call
-import datetime
-from datetime import timedelta
 
 # litellm.set_verbose=True
 
@@ -2141,18 +2140,19 @@ def test_basic_caching_import():
 @pytest.mark.parametrize("sync_mode", [True, False])
 @pytest.mark.asyncio()
 async def test_caching_kwargs_input(sync_mode):
+    from datetime import datetime
+
     from litellm import acompletion
     from litellm.caching.caching_handler import LLMCachingHandler
     from litellm.types.utils import (
         Choices,
+        CompletionTokensDetails,
         EmbeddingResponse,
         Message,
         ModelResponse,
-        Usage,
-        CompletionTokensDetails,
         PromptTokensDetails,
+        Usage,
     )
-    from datetime import datetime
 
     llm_caching_handler = LLMCachingHandler(
         original_function=acompletion, request_kwargs={}, start_time=datetime.now()

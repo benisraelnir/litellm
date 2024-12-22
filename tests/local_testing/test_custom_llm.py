@@ -28,6 +28,7 @@ from typing import (
     Union,
 )
 from unittest.mock import AsyncMock, MagicMock, patch
+
 import httpx
 from dotenv import load_dotenv
 
@@ -43,9 +44,9 @@ from litellm import (
     get_llm_provider,
     image_generation,
 )
-from litellm.utils import ModelResponseIterator
-from litellm.types.utils import ImageResponse, ImageObject
 from litellm.llms.custom_httpx.http_handler import AsyncHTTPHandler, HTTPHandler
+from litellm.types.utils import ImageObject, ImageResponse
+from litellm.utils import ModelResponseIterator
 
 
 class CustomModelResponseIterator:

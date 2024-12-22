@@ -1,24 +1,32 @@
 # What is this?
 ## Unit tests for opentelemetry integration
 
+import asyncio
+import os
+import random
+
 # What is this?
 ## Unit test for presidio pii masking
-import sys, os, asyncio, time, random
-from datetime import datetime
+import sys
+import time
 import traceback
+from datetime import datetime
+
 from dotenv import load_dotenv
 
 load_dotenv()
-import os
 import asyncio
+import os
 
 sys.path.insert(
     0, os.path.abspath("../..")
 )  # Adds the parent directory to the system path
+from unittest.mock import AsyncMock, MagicMock, patch
+
 import pytest
-import litellm
-from unittest.mock import patch, MagicMock, AsyncMock
 from base_test import BaseLoggingCallbackTest
+
+import litellm
 from litellm.types.utils import ModelResponse
 
 

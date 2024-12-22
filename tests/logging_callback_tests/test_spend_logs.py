@@ -22,11 +22,12 @@ import datetime
 import json
 import logging
 from typing import Optional
+
 import pytest
 
 import litellm
-from litellm.proxy.spend_tracking.spend_tracking_utils import get_logging_payload
 from litellm.proxy._types import SpendLogsMetadata, SpendLogsPayload
+from litellm.proxy.spend_tracking.spend_tracking_utils import get_logging_payload
 
 
 @pytest.mark.parametrize(

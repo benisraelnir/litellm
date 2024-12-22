@@ -1,9 +1,11 @@
 #### What this tests ####
 #    This tests using caching w/ litellm which requires SSL=True
 
-import sys, os
+import os
+import sys
 import time
 import traceback
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -13,8 +15,9 @@ sys.path.insert(
     0, os.path.abspath("../..")
 )  # Adds the parent directory to the system path
 import pytest
+
 import litellm
-from litellm import embedding, completion, Router
+from litellm import Router, completion, embedding
 from litellm.caching.caching import Cache
 
 messages = [{"role": "user", "content": f"who is ishaan {time.time()}"}]
@@ -108,7 +111,7 @@ async def test_redis_with_ssl():
     Relevant issue:
         User was seeing this error: `TypeError: AbstractConnection.__init__() got an unexpected keyword argument 'ssl'`
     """
-    from litellm._redis import get_redis_connection_pool, get_redis_async_client
+    from litellm._redis import get_redis_async_client, get_redis_connection_pool
 
     # Get the connection pool with SSL
     # REDIS_HOST_WITH_SSL is just a redis cloud instance with Transport layer security (TLS) enabled

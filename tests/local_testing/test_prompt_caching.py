@@ -6,8 +6,9 @@ import sys
 
 sys.path.insert(0, os.path.abspath("../.."))
 
-import litellm
 import pytest
+
+import litellm
 
 
 def _usage_format_tests(usage: litellm.Usage):

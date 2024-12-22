@@ -4,14 +4,14 @@ Test Vertex AI Pass Through
 1. use Credentials client side, Assert SpendLog was created
 """
 
-import vertexai
-from vertexai.preview.generative_models import GenerativeModel
-import tempfile
+import asyncio
 import json
 import os
-import pytest
-import asyncio
+import tempfile
 
+import pytest
+import vertexai
+from vertexai.preview.generative_models import GenerativeModel
 
 # Path to your service account JSON file
 SERVICE_ACCOUNT_FILE = "path/to/your/service-account.json"
@@ -64,6 +64,7 @@ async def call_spend_logs_endpoint():
     curl -X GET "http://0.0.0.0:4000/spend/logs" -H "Authorization: Bearer sk-1234"
     """
     import datetime
+
     import requests
 
     todays_date = datetime.datetime.now().strftime("%Y-%m-%d")
@@ -160,10 +161,11 @@ async def test_basic_vertex_ai_pass_through_streaming_with_spendlog():
 )
 @pytest.mark.asyncio
 async def test_vertex_ai_pass_through_endpoint_context_caching():
+    import datetime
+
     import vertexai
     from vertexai.generative_models import Part
     from vertexai.preview import caching
-    import datetime
 
     # load_vertex_ai_credentials()
 

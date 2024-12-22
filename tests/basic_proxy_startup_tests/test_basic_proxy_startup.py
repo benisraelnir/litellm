@@ -5,9 +5,10 @@ This test ensures that the proxy starts and serves requests even with a bad lice
 in ci/cd config.yml, we set the license to "bad-license"
 """
 
-import pytest
-import aiohttp
 from typing import Optional
+
+import aiohttp
+import pytest
 
 
 @pytest.mark.asyncio

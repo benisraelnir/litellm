@@ -4,20 +4,16 @@ This module provides mock completion functionality for testing and debugging pur
 It includes functions for generating mock responses in both streaming and non-streaming formats.
 """
 
-from typing import Any, Dict, List, Optional, Union
 import asyncio
 import time
+from typing import Any, List, Optional, Union
+
 import httpx
 import openai
+
 import litellm
-from litellm.utils import (
-    Usage,
-    Message,
-    Choices,
-    ModelResponse,
-    CustomStreamWrapper,
-)
 from litellm.types.utils import ChatCompletionMessageToolCall
+from litellm.utils import Choices, CustomStreamWrapper, Message, ModelResponse, Usage
 
 
 def mock_completion_streaming_obj(model_response, mock_response, model, n=None):
@@ -38,14 +34,21 @@ def mock_completion_streaming_obj(model_response, mock_response, model, n=None):
         response_array = []
 
         if isinstance(mock_response, str):
-            response_array = [mock_response[i:i+chunk_size] for i in range(0, len(mock_response), chunk_size)]
+            response_array = [
+                mock_response[i : i + chunk_size]
+                for i in range(0, len(mock_response), chunk_size)
+            ]
         else:
             response_array = [mock_response]
 
         for i, chunk in enumerate(response_array):
             content += str(chunk)
-            delta = {"content": str(chunk)} if i != len(response_array) - 1 else {"content": str(chunk), "role": "assistant"}
-            
+            delta = (
+                {"content": str(chunk)}
+                if i != len(response_array) - 1
+                else {"content": str(chunk), "role": "assistant"}
+            )
+
             if n and n > 1:
                 choices = []
                 for j in range(n):
@@ -58,8 +61,10 @@ def mock_completion_streaming_obj(model_response, mock_response, model, n=None):
                 model_response.choices = choices
             else:
                 model_response.choices[0].delta = delta
-                model_response.choices[0].finish_reason = "stop" if i == len(response_array) - 1 else None
-            
+                model_response.choices[0].finish_reason = (
+                    "stop" if i == len(response_array) - 1 else None
+                )
+
             model_response.model = model
             yield model_response
             time.sleep(0.02)
@@ -67,7 +72,9 @@ def mock_completion_streaming_obj(model_response, mock_response, model, n=None):
         raise Exception(f"Mock streaming failed: {str(e)}")
 
 
-async def async_mock_completion_streaming_obj(model_response, mock_response, model, n=None):
+async def async_mock_completion_streaming_obj(
+    model_response, mock_response, model, n=None
+):
     """Generate an async mock streaming completion object.
 
     Args:
@@ -85,14 +92,21 @@ async def async_mock_completion_streaming_obj(model_response, mock_response, mod
         response_array = []
 
         if isinstance(mock_response, str):
-            response_array = [mock_response[i:i+chunk_size] for i in range(0, len(mock_response), chunk_size)]
+            response_array = [
+                mock_response[i : i + chunk_size]
+                for i in range(0, len(mock_response), chunk_size)
+            ]
         else:
             response_array = [mock_response]
 
         for i, chunk in enumerate(response_array):
             content += str(chunk)
-            delta = {"content": str(chunk)} if i != len(response_array) - 1 else {"content": str(chunk), "role": "assistant"}
-            
+            delta = (
+                {"content": str(chunk)}
+                if i != len(response_array) - 1
+                else {"content": str(chunk), "role": "assistant"}
+            )
+
             if n and n > 1:
                 choices = []
                 for j in range(n):
@@ -105,8 +119,10 @@ async def async_mock_completion_streaming_obj(model_response, mock_response, mod
                 model_response.choices = choices
             else:
                 model_response.choices[0].delta = delta
-                model_response.choices[0].finish_reason = "stop" if i == len(response_array) - 1 else None
-            
+                model_response.choices[0].finish_reason = (
+                    "stop" if i == len(response_array) - 1 else None
+                )
+
             model_response.model = model
             yield model_response
             await asyncio.sleep(0.02)
@@ -168,7 +184,9 @@ def mock_completion(
                 model=model,
                 request=httpx.Request(method="POST", url="https://api.openai.com/v1/"),
             )
-        elif isinstance(mock_response, str) and mock_response == "litellm.RateLimitError":
+        elif (
+            isinstance(mock_response, str) and mock_response == "litellm.RateLimitError"
+        ):
             raise litellm.RateLimitError(
                 message="this is a mock rate limit error",
                 llm_provider=getattr(
@@ -176,7 +194,10 @@ def mock_completion(
                 ),
                 model=model,
             )
-        elif isinstance(mock_response, str) and mock_response == "litellm.InternalServerError":
+        elif (
+            isinstance(mock_response, str)
+            and mock_response == "litellm.InternalServerError"
+        ):
             raise litellm.InternalServerError(
                 message="this is a mock internal server error",
                 llm_provider=getattr(
@@ -184,7 +205,9 @@ def mock_completion(
                 ),
                 model=model,
             )
-        elif isinstance(mock_response, str) and mock_response.startswith("Exception: content_filter_policy"):
+        elif isinstance(mock_response, str) and mock_response.startswith(
+            "Exception: content_filter_policy"
+        ):
             raise litellm.MockException(
                 status_code=400,
                 message=mock_response,
@@ -192,7 +215,9 @@ def mock_completion(
                 model=model,
                 request=httpx.Request(method="POST", url="https://api.openai.com/v1/"),
             )
-        elif isinstance(mock_response, str) and mock_response.startswith("Exception: mock_streaming_error"):
+        elif isinstance(mock_response, str) and mock_response.startswith(
+            "Exception: mock_streaming_error"
+        ):
             mock_response = litellm.MockException(
                 message="This is a mock error raised mid-stream",
                 llm_provider="anthropic",

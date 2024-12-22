@@ -1,13 +1,13 @@
 # What this tests ?
 ## Tests /config/update + Test /chat/completions -> assert logs are sent to Langfuse
 
-import pytest
 import asyncio
-import aiohttp
 import os
+
+import aiohttp
 import dotenv
-from dotenv import load_dotenv
 import pytest
+from dotenv import load_dotenv
 
 load_dotenv()
 

@@ -11,17 +11,16 @@ sys.path.insert(
 
 import httpx
 import pytest
+
 import litellm
 from litellm.litellm_core_utils.litellm_logging import Logging as LiteLLMLoggingObj
-
-
 from litellm.proxy.vertex_ai_endpoints.vertex_endpoints import (
-    get_litellm_virtual_key,
-    vertex_proxy_route,
-    _get_vertex_env_vars,
-    set_default_vertex_config,
     VertexPassThroughCredentials,
+    _get_vertex_env_vars,
     default_vertex_config,
+    get_litellm_virtual_key,
+    set_default_vertex_config,
+    vertex_proxy_route,
 )
 
 

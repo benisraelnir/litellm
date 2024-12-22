@@ -1,23 +1,25 @@
-import pytest
-from fastapi.testclient import TestClient
-from fastapi import Request, Header
-from unittest.mock import patch, MagicMock, AsyncMock
-
-import sys
 import os
+import sys
+from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
+from fastapi import Header, Request
+from fastapi.testclient import TestClient
 
 sys.path.insert(
     0, os.path.abspath("../..")
 )  # Adds the parent directory to the system path
+import os
+import time
+
+import jwt
+
 import litellm
+from litellm.caching.caching import DualCache
+from litellm.proxy._types import LitellmUserRoles
+from litellm.proxy.management_endpoints.ui_sso import auth_callback
 from litellm.proxy.proxy_server import app
 from litellm.proxy.utils import PrismaClient, ProxyLogging
-from litellm.proxy.management_endpoints.ui_sso import auth_callback
-from litellm.proxy._types import LitellmUserRoles
-import os
-import jwt
-import time
-from litellm.caching.caching import DualCache
 
 proxy_logging_obj = ProxyLogging(user_api_key_cache=DualCache())
 

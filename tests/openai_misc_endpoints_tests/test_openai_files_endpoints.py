@@ -1,11 +1,12 @@
 # What this tests ?
 ## Tests /chat/completions by generating a key and then making a chat completions request
-import pytest
 import asyncio
-import aiohttp, openai
-from openai import OpenAI, AsyncOpenAI
-from typing import Optional, List, Union
+from typing import List, Optional, Union
 
+import aiohttp
+import openai
+import pytest
+from openai import AsyncOpenAI, OpenAI
 
 BASE_URL = "http://localhost:4000"  # Replace with your actual base URL
 API_KEY = "sk-1234"  # Replace with your actual API key

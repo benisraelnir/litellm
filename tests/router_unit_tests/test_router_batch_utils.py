@@ -1,24 +1,26 @@
-import sys
 import os
+import sys
 import traceback
+from datetime import datetime
+
 from dotenv import load_dotenv
 from fastapi import Request
-from datetime import datetime
 
 sys.path.insert(
     0, os.path.abspath("../..")
 )  # Adds the parent directory to the system path
-from litellm import Router
-import pytest
-import litellm
-from unittest.mock import patch, MagicMock, AsyncMock
-
 import json
 from io import BytesIO
 from typing import Dict, List
+from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
+
+import litellm
+from litellm import Router
 from litellm.router_utils.batch_utils import (
-    replace_model_in_jsonl,
     _get_router_metadata_variable_name,
+    replace_model_in_jsonl,
 )
 
 

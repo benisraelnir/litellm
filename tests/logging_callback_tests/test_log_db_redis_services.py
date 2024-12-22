@@ -2,7 +2,6 @@ import io
 import os
 import sys
 
-
 sys.path.insert(0, os.path.abspath("../.."))
 
 import asyncio
@@ -10,17 +9,17 @@ import gzip
 import json
 import logging
 import time
+from datetime import datetime
 from unittest.mock import AsyncMock, patch
 
+import httpx
 import pytest
+from prisma.errors import ClientNotConnectedError
 
 import litellm
 from litellm import completion
 from litellm._logging import verbose_logger
-from litellm.proxy.utils import log_db_metrics, ServiceTypes
-from datetime import datetime
-import httpx
-from prisma.errors import ClientNotConnectedError
+from litellm.proxy.utils import ServiceTypes, log_db_metrics
 
 
 # Test async function to decorate

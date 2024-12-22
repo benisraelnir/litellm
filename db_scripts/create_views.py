@@ -4,9 +4,10 @@ python script to pre-create all views required by LiteLLM Proxy Server
 
 import asyncio
 
+from prisma import Prisma
+
 # Enter your DATABASE_URL here
 
-from prisma import Prisma
 
 db = Prisma(
     http={

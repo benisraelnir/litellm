@@ -44,7 +44,10 @@ class OpenAILikeBase:
             }
 
         if api_key is not None:
-            headers.update({"Authorization": "Bearer {}".format(api_key)})
+            # Ensure api_key is a string and properly encoded
+            api_key_str = str(api_key).strip()
+            if api_key_str:
+                headers.update({"Authorization": f"Bearer {api_key_str}"})
 
         if not custom_endpoint:
             if endpoint_type == "chat_completions":

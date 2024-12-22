@@ -279,6 +279,7 @@ async def test_basic_gcs_logging_per_request_with_callback_set():
     Request 2 - don't pass gcs_bucket_name in kwargs - ensure 'litellm-testing-bucket'
     """
     import logging
+
     from litellm._logging import verbose_logger
 
     verbose_logger.setLevel(logging.DEBUG)
@@ -408,6 +409,7 @@ async def test_basic_gcs_logging_per_request_with_no_litellm_callback_set():
     Request 2 - don't pass gcs_bucket_name in kwargs - ensure 'litellm-testing-bucket'
     """
     import logging
+
     from litellm._logging import verbose_logger
 
     verbose_logger.setLevel(logging.DEBUG)

@@ -3,10 +3,10 @@ Test that all cache calls in async functions in router_strategy/ are async
 
 """
 
+import ast
 import os
 import sys
 from typing import Dict, List, Tuple
-import ast
 
 sys.path.insert(
     0, os.path.abspath("../..")

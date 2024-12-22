@@ -7,24 +7,23 @@ from unittest.mock import AsyncMock
 sys.path.insert(
     0, os.path.abspath("../..")
 )  # Adds the parent directory to the system-path
-from datetime import datetime as dt_object
-import time
-import pytest
-import litellm
-
 import json
-from litellm.types.utils import GenericBudgetInfo
 import os
 import sys
+import time
 from datetime import datetime
+from datetime import datetime as dt_object
 from unittest.mock import AsyncMock, patch
+
 import pytest
+
+import litellm
 from litellm.caching.caching import DualCache
+from litellm.proxy._types import UserAPIKeyAuth
 from litellm.proxy.hooks.model_max_budget_limiter import (
     _PROXY_VirtualKeyModelMaxBudgetLimiter,
 )
-from litellm.proxy._types import UserAPIKeyAuth
-import litellm
+from litellm.types.utils import GenericBudgetInfo
 
 
 # Test class setup

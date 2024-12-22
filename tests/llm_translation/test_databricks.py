@@ -1,21 +1,22 @@
 import asyncio
-import httpx
 import json
-import pytest
+import os
 import sys
 from typing import Any, Dict, List
-from unittest.mock import MagicMock, Mock, patch, ANY
+from unittest.mock import ANY, MagicMock, Mock, patch
 
-import os
+import httpx
+import pytest
 
 sys.path.insert(
     0, os.path.abspath("../..")
 )  # Adds the parent directory to the system path
+from base_llm_unit_tests import BaseLLMChatTest
+
 import litellm
 from litellm.exceptions import BadRequestError
 from litellm.llms.custom_httpx.http_handler import AsyncHTTPHandler, HTTPHandler
 from litellm.utils import CustomStreamWrapper
-from base_llm_unit_tests import BaseLLMChatTest
 
 try:
     import databricks.sdk

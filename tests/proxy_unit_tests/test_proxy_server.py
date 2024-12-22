@@ -199,12 +199,14 @@ def test_get_settings_request_timeout(client_no_auth):
     ["x-litellm-key", None],
 )
 def test_add_headers_to_request(litellm_key_header_name):
+    import json
+
     from fastapi import Request
     from starlette.datastructures import URL
-    import json
+
     from litellm.proxy.litellm_pre_call_utils import (
-        clean_headers,
         LiteLLMProxyRequestSetup,
+        clean_headers,
     )
 
     headers = {
@@ -919,6 +921,8 @@ import random
 import uuid
 from unittest.mock import AsyncMock, MagicMock, PropertyMock, patch
 
+from test_key_generate_prisma import prisma_client
+
 from litellm.proxy._types import (
     LitellmUserRoles,
     NewUserRequest,
@@ -927,7 +931,6 @@ from litellm.proxy._types import (
 )
 from litellm.proxy.management_endpoints.internal_user_endpoints import new_user
 from litellm.proxy.management_endpoints.team_endpoints import team_member_add
-from test_key_generate_prisma import prisma_client
 
 
 @pytest.mark.parametrize(
@@ -2065,9 +2068,9 @@ async def test_proxy_model_group_info_rerank(prisma_client):
 
 @pytest.mark.asyncio
 async def test_proxy_server_prisma_setup():
+    from litellm.caching import DualCache
     from litellm.proxy.proxy_server import ProxyStartupEvent, proxy_state
     from litellm.proxy.utils import ProxyLogging
-    from litellm.caching import DualCache
 
     user_api_key_cache = DualCache()
 
@@ -2108,9 +2111,9 @@ async def test_proxy_server_prisma_setup_invalid_db():
 
     Think 2-3 times before editing / deleting this test, it's important for PROD
     """
+    from litellm.caching import DualCache
     from litellm.proxy.proxy_server import ProxyStartupEvent
     from litellm.proxy.utils import ProxyLogging
-    from litellm.caching import DualCache
 
     user_api_key_cache = DualCache()
     invalid_db_url = "postgresql://invalid:invalid@localhost:5432/nonexistent"
@@ -2140,10 +2143,11 @@ async def test_get_ui_settings_spend_logs_threshold():
     """
     Test that get_ui_settings correctly sets DISABLE_EXPENSIVE_DB_QUERIES based on spend_logs_row_count threshold
     """
+    from fastapi import Request
+
+    from litellm.constants import MAX_SPENDLOG_ROWS_TO_QUERY
     from litellm.proxy.management_endpoints.ui_sso import get_ui_settings
     from litellm.proxy.proxy_server import proxy_state
-    from fastapi import Request
-    from litellm.constants import MAX_SPENDLOG_ROWS_TO_QUERY
 
     # Create a mock request
     mock_request = Request(

@@ -1,10 +1,10 @@
-import ast
-from typing import List, Dict, Set, Optional
-import os
-from dataclasses import dataclass
 import argparse
+import ast
+import os
 import re
 import sys
+from dataclasses import dataclass
+from typing import Dict, List, Optional, Set
 
 sys.path.insert(
     0, os.path.abspath("../..")

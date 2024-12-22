@@ -11,8 +11,10 @@ import os
 sys.path.insert(
     0, os.path.abspath("../..")
 )  # Adds the parent directory to the system path
+from unittest.mock import AsyncMock, MagicMock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock, AsyncMock
+
 import litellm
 from litellm import RateLimitError, Timeout, completion, completion_cost, embedding
 
@@ -626,9 +628,10 @@ def test_passing_tool_result_as_list(model):
 @pytest.mark.asyncio
 @pytest.mark.flaky(retries=6, delay=1)
 async def test_watsonx_tool_choice(sync_mode):
-    from litellm.llms.custom_httpx.http_handler import HTTPHandler, AsyncHTTPHandler
     import json
+
     from litellm import acompletion, completion
+    from litellm.llms.custom_httpx.http_handler import AsyncHTTPHandler, HTTPHandler
 
     litellm.set_verbose = True
     tools = [

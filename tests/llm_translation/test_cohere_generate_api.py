@@ -22,8 +22,9 @@ from litellm.llms.cohere.completion.transformation import CohereTextConfig
 
 def test_cohere_generate_api_completion():
     try:
+        from unittest.mock import MagicMock, patch
+
         from litellm.llms.custom_httpx.http_handler import HTTPHandler
-        from unittest.mock import patch, MagicMock
 
         client = HTTPHandler()
         litellm.set_verbose = True

@@ -1,9 +1,12 @@
 # What this tests?
 ## Tests /spend endpoints.
 
-import pytest, time, uuid
 import asyncio
+import time
+import uuid
+
 import aiohttp
+import pytest
 
 
 async def generate_key(session, models=[]):

@@ -1,27 +1,35 @@
-import sys, os, asyncio, time, random
-from datetime import datetime
+import asyncio
+import os
+import random
+import sys
+import time
 import traceback
+from datetime import datetime
+
 from dotenv import load_dotenv
 
 load_dotenv()
-import os, copy
+import copy
+import os
 
 sys.path.insert(
     0, os.path.abspath("../..")
 )  # Adds the parent directory to the system-path
+import logging
+from datetime import timedelta, timezone
+
 import pytest
+
+import litellm
 from litellm import Router
+from litellm._logging import verbose_router_logger
+from litellm.caching.caching import DualCache, RedisCache
 from litellm.router_strategy.budget_limiter import RouterBudgetLimiting
 from litellm.types.router import (
-    RoutingStrategy,
     GenericBudgetConfigType,
     GenericBudgetInfo,
+    RoutingStrategy,
 )
-from litellm.caching.caching import DualCache, RedisCache
-import logging
-from litellm._logging import verbose_router_logger
-import litellm
-from datetime import timezone, timedelta
 from litellm.types.utils import BudgetConfig
 
 verbose_router_logger.setLevel(logging.DEBUG)
@@ -245,6 +253,7 @@ async def test_prometheus_metric_tracking():
     """
     cleanup_redis()
     from unittest.mock import MagicMock
+
     from litellm.integrations.prometheus import PrometheusLogger
 
     # Create a mock PrometheusLogger

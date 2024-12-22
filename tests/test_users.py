@@ -1,12 +1,13 @@
 # What this tests ?
 ## Tests /user endpoints.
-import pytest
 import asyncio
-import aiohttp
 import time
+from typing import Optional
+
+import aiohttp
+import pytest
 from openai import AsyncOpenAI
 from test_team import list_teams
-from typing import Optional
 
 
 async def new_user(session, i, user_id=None, budget=None, budget_duration=None):

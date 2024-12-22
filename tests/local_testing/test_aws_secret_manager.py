@@ -10,12 +10,10 @@ from dotenv import load_dotenv
 import litellm.types
 import litellm.types.utils
 
-
 load_dotenv()
 import io
-
-import sys
 import os
+import sys
 
 # Ensure the project root is in the Python path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../..")))
@@ -24,12 +22,13 @@ print("Python Path:", sys.path)
 print("Current Working Directory:", os.getcwd())
 
 
+import json
+import uuid
 from typing import Optional
 from unittest.mock import MagicMock, patch
 
 import pytest
-import uuid
-import json
+
 from litellm.secret_managers.aws_secret_manager_v2 import AWSSecretsManagerV2
 
 

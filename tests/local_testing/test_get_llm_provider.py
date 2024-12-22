@@ -6,7 +6,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 import io
-
 from unittest.mock import patch
 
 sys.path.insert(

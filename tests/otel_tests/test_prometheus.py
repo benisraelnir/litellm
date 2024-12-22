@@ -2,12 +2,13 @@
 Unit tests for prometheus metrics
 """
 
-import pytest
-import aiohttp
 import asyncio
-import uuid
 import os
 import sys
+import uuid
+
+import aiohttp
+import pytest
 
 sys.path.insert(
     0, os.path.abspath("../..")
@@ -168,8 +169,9 @@ def verify_latency_metrics(metrics: str):
     - litellm_request_total_latency_metric_bucket
     - litellm_llm_api_latency_metric_bucket
     """
-    from litellm.types.integrations.prometheus import LATENCY_BUCKETS
     import re
+
+    from litellm.types.integrations.prometheus import LATENCY_BUCKETS
 
     metric_names = [
         "litellm_request_total_latency_metric_bucket",

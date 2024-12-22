@@ -12,15 +12,17 @@ from unittest.mock import AsyncMock, MagicMock, patch
 sys.path.insert(
     0, os.path.abspath("../..")
 )  # Adds the parent directory to the system path
+import httpx
 import pytest
+
 import litellm
 from litellm import get_optional_params
 from litellm.llms.custom_httpx.http_handler import HTTPHandler
-import httpx
 
 
 def test_completion_pydantic_obj_2():
     from pydantic import BaseModel
+
     from litellm.llms.custom_httpx.http_handler import HTTPHandler
 
     litellm.set_verbose = True
@@ -95,10 +97,9 @@ def test_completion_pydantic_obj_2():
 
 
 def test_build_vertex_schema():
-    from litellm.llms.vertex_ai.common_utils import (
-        _build_vertex_schema,
-    )
     import json
+
+    from litellm.llms.vertex_ai.common_utils import _build_vertex_schema
 
     schema = {
         "type": "object",
@@ -1122,10 +1123,8 @@ def test_logprobs():
 
 def test_process_gemini_image():
     """Test the _process_gemini_image function for different image sources"""
-    from litellm.llms.vertex_ai.gemini.transformation import (
-        _process_gemini_image,
-    )
-    from litellm.types.llms.vertex_ai import PartType, FileDataType, BlobType
+    from litellm.llms.vertex_ai.gemini.transformation import _process_gemini_image
+    from litellm.types.llms.vertex_ai import BlobType, FileDataType, PartType
 
     # Test GCS URI
     gcs_result = _process_gemini_image("gs://bucket/image.png")

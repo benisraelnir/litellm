@@ -1,12 +1,16 @@
 # What this tests ?
 ## Tests /key endpoints.
 
-import pytest
-import asyncio, time, uuid
-import aiohttp
-from openai import AsyncOpenAI
-import sys, os
+import asyncio
+import os
+import sys
+import time
+import uuid
 from typing import Optional
+
+import aiohttp
+import pytest
+from openai import AsyncOpenAI
 
 sys.path.insert(
     0, os.path.abspath("../")

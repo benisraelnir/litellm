@@ -1,14 +1,15 @@
+import pytest
+
 from litellm.types.files import (
     FILE_EXTENSIONS,
     FILE_MIME_TYPES,
     FileType,
-    get_file_extension_from_mime_type,
-    get_file_type_from_extension,
     get_file_extension_for_file_type,
+    get_file_extension_from_mime_type,
     get_file_mime_type_for_file_type,
     get_file_mime_type_from_extension,
+    get_file_type_from_extension,
 )
-import pytest
 
 
 class TestFileConsts:

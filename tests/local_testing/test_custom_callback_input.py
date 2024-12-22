@@ -1570,8 +1570,8 @@ async def test_standard_logging_payload_stream_usage(sync_mode):
     """
     Even if stream_options is not provided, correct usage should be logged
     """
-    from litellm.types.utils import StandardLoggingPayload
     from litellm.main import stream_chunk_builder
+    from litellm.types.utils import StandardLoggingPayload
 
     stream = True
     try:
@@ -1630,8 +1630,8 @@ def test_standard_logging_retries():
     """
     know if a request was retried.
     """
-    from litellm.types.utils import StandardLoggingPayload
     from litellm.router import Router
+    from litellm.types.utils import StandardLoggingPayload
 
     customHandler = CompletionCustomHandler()
     litellm.callbacks = [customHandler]

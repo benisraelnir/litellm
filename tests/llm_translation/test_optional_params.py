@@ -953,7 +953,7 @@ def test_together_ai_model_params():
 
 
 def test_forward_user_param():
-    from litellm.utils import get_supported_openai_params, get_optional_params
+    from litellm.utils import get_optional_params, get_supported_openai_params
 
     model = "claude-3-5-sonnet-20240620"
     optional_params = get_optional_params(

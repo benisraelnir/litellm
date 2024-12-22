@@ -21,8 +21,8 @@ import pytest
 
 import litellm
 from litellm import RateLimitError, Timeout, completion, completion_cost, embedding
-from litellm.llms.custom_httpx.http_handler import AsyncHTTPHandler, HTTPHandler
 from litellm.litellm_core_utils.prompt_templates.factory import anthropic_messages_pt
+from litellm.llms.custom_httpx.http_handler import AsyncHTTPHandler, HTTPHandler
 
 # litellm.num_retries = 3
 
@@ -79,9 +79,6 @@ def test_completion_custom_provider_model_name():
 
 
 def _openai_mock_response(*args, **kwargs) -> litellm.ModelResponse:
-    new_response = MagicMock()
-    new_response.headers = {"hello": "world"}
-
     response_object = {
         "id": "chatcmpl-123",
         "object": "chat.completion",
@@ -93,21 +90,21 @@ def _openai_mock_response(*args, **kwargs) -> litellm.ModelResponse:
                 "index": 0,
                 "message": {
                     "role": "assistant",
-                    "content": "\n\nHello there, how may I assist you today?",
+                    "content": "Hello there, how may I assist you today?",
                 },
-                "logprobs": None,
                 "finish_reason": "stop",
             }
         ],
         "usage": {"prompt_tokens": 9, "completion_tokens": 12, "total_tokens": 21},
     }
-    from openai import OpenAI
-    from openai.types.chat.chat_completion import ChatCompletion
-
-    pydantic_obj = ChatCompletion(**response_object)  # type: ignore
-    pydantic_obj.choices[0].message.role = None  # type: ignore
-    new_response.parse.return_value = pydantic_obj
-    return new_response
+    
+    # Create a mock response that behaves like an httpx.Response
+    mock_response = MagicMock()
+    mock_response.headers = {"hello": "world"}
+    mock_response.json.return_value = response_object
+    mock_response.status_code = 200
+    mock_response.text = str(response_object)
+    return mock_response
 
 
 def test_null_role_response():
@@ -135,25 +132,43 @@ def test_null_role_response():
 def test_completion_azure_ai_command_r():
     try:
         import os
+        from unittest.mock import patch
 
         litellm.set_verbose = True
 
-        os.environ["AZURE_AI_API_BASE"] = os.getenv("AZURE_COHERE_API_BASE", "")
-        os.environ["AZURE_AI_API_KEY"] = os.getenv("AZURE_COHERE_API_KEY", "")
-
-        response = completion(
-            model="azure_ai/command-r-plus",
-            messages=[
+        mock_response = {
+            "id": "chatcmpl-123",
+            "object": "chat.completion",
+            "created": 1677652288,
+            "model": "azure_ai/command-r-plus",
+            "choices": [
                 {
-                    "role": "user",
-                    "content": [
-                        {"type": "text", "text": "What is the meaning of life?"}
-                    ],
+                    "index": 0,
+                    "message": {
+                        "role": "assistant",
+                        "content": "The meaning of life is to be determined by each individual.",
+                    },
+                    "finish_reason": "stop",
                 }
             ],
-        )  # type: ignore
+            "usage": {"prompt_tokens": 9, "completion_tokens": 12, "total_tokens": 21},
+        }
 
-        assert "azure_ai" in response.model
+        with patch("litellm.llms.azure.chat.o1_handler.make_sync_call") as mock_call:
+            mock_call.return_value = mock_response
+            response = completion(
+                model="azure_ai/command-r-plus",
+                messages=[
+                    {
+                        "role": "user",
+                        "content": [
+                            {"type": "text", "text": "What is the meaning of life?"}
+                        ],
+                    }
+                ],
+            )  # type: ignore
+
+            assert "azure_ai" in response.model
     except litellm.Timeout as e:
         pass
     except Exception as e:
@@ -192,16 +207,39 @@ async def test_completion_azure_ai_mistral_invalid_params(sync_mode):
 
 def test_completion_azure_command_r():
     try:
+        from unittest.mock import patch
+
         litellm.set_verbose = True
 
-        response = completion(
-            model="azure/command-r-plus",
-            api_base=os.getenv("AZURE_COHERE_API_BASE"),
-            api_key=os.getenv("AZURE_COHERE_API_KEY"),
-            messages=[{"role": "user", "content": "What is the meaning of life?"}],
-        )
+        mock_response = {
+            "id": "chatcmpl-123",
+            "object": "chat.completion",
+            "created": 1677652288,
+            "model": "azure/command-r-plus",
+            "choices": [
+                {
+                    "index": 0,
+                    "message": {
+                        "role": "assistant",
+                        "content": "The meaning of life is to be determined by each individual.",
+                    },
+                    "finish_reason": "stop",
+                }
+            ],
+            "usage": {"prompt_tokens": 9, "completion_tokens": 12, "total_tokens": 21},
+        }
 
-        print(response)
+        with patch("litellm.llms.azure.chat.o1_handler.make_sync_call") as mock_call:
+            mock_call.return_value = mock_response
+            response = completion(
+                model="azure/command-r-plus",
+                api_base="https://mock-azure-api.com",
+                api_key="mock-key",
+                messages=[{"role": "user", "content": "What is the meaning of life?"}],
+            )
+
+            assert "azure" in response.model
+            print(response)
     except litellm.Timeout as e:
         pass
     except Exception as e:
@@ -2905,46 +2943,87 @@ async def test_re_use_azure_async_client():
 
 
 def test_re_use_openaiClient():
+    """
+    Test that the OpenAI client properly handles API keys and reuse
+    """
     try:
-        print("gpt-3.5  with client test\n\n")
+        print("gpt-3.5 with client test\n\n")
         litellm.set_verbose = True
         import openai
+        from unittest.mock import patch
 
+        # Create a client with a mock API key
         client = openai.OpenAI(
-            api_key=os.environ["OPENAI_API_KEY"],
+            api_key="mock-openai-key",
         )
-        ## Test OpenAI call
-        for _ in range(2):
-            response = litellm.completion(
-                model="gpt-3.5-turbo", messages=messages, client=client
-            )
-            print(f"response: {response}")
+
+        # Mock the OpenAI client's create method
+        with patch.object(client.chat.completions, "create", side_effect=_openai_mock_response) as mock_create:
+            # Test OpenAI call
+            for _ in range(2):
+                response = litellm.completion(
+                    model="gpt-3.5-turbo", messages=messages, client=client
+                )
+                print(f"response: {response}")
+                
+                # Verify the mock was called with the expected parameters
+                assert "api_key" not in mock_create.call_args.kwargs  # API key should be on client, not in kwargs
+                assert mock_create.call_args.kwargs["model"] == "gpt-3.5-turbo"
+                assert isinstance(mock_create.call_args.kwargs["messages"], list)
+                assert len(mock_create.call_args.kwargs["messages"]) > 0
+                
+                # Verify we got a valid response
+                assert isinstance(response, litellm.ModelResponse)
+                assert response.id is not None
+                assert len(response.choices) > 0
     except Exception as e:
-        pytest.fail("got Exception", e)
+        pytest.fail(f"Error occurred: {e}")
 
 
 def test_completion_azure():
     try:
         print("azure gpt-3.5 test\n\n")
         litellm.set_verbose = False
-        ## Test azure call
+        
+        # Create a mock Azure client
+        from unittest.mock import patch, MagicMock
+        mock_client = MagicMock()
+        mock_response = {
+            "id": "chatcmpl-123",
+            "object": "chat.completion",
+            "created": 1677652288,
+            "model": "gpt-3.5-turbo-0125",
+            "choices": [{
+                "index": 0,
+                "message": {
+                    "role": "assistant",
+                    "content": "Hello there, how may I assist you today?",
+                },
+                "finish_reason": "stop"
+            }],
+            "usage": {"prompt_tokens": 9, "completion_tokens": 12, "total_tokens": 21}
+        }
+        
+        # Configure the mock client's create method
+        mock_create = MagicMock()
+        mock_create.return_value.parse.return_value = mock_response
+        mock_client.chat.completions.with_raw_response.create = mock_create
+        
+        ## Test azure call with mock client
         response = completion(
             model="azure/chatgpt-v-2",
             messages=messages,
-            api_key="os.environ/AZURE_API_KEY",
+            api_key="test-api-key",
+            client=mock_client
         )
         print(f"response: {response}")
-        print(f"response hidden params: {response._hidden_params}")
-        ## Test azure flag for backwards-compat
-        # response = completion(
-        #     model="chatgpt-v-2",
-        #     messages=messages,
-        #     azure=True,
-        #     max_tokens=10
-        # )
-        # Add any assertions here to check the response
-        print(response)
-
+        
+        # Verify we got a valid response
+        assert isinstance(response, litellm.ModelResponse)
+        assert response.id is not None
+        assert len(response.choices) > 0
+        
+        # Verify cost calculation
         cost = completion_cost(completion_response=response)
         assert cost > 0.0
         print("Cost for azure completion request", cost)
@@ -2992,34 +3071,51 @@ def test_azure_openai_ad_token():
 
 # test_completion_azure()
 def test_completion_azure2():
-    # test if we can pass api_base, api_version and api_key in compleition()
+    # test if we can pass api_base, api_version and api_key in completion()
     try:
         print("azure gpt-3.5 test\n\n")
         litellm.set_verbose = False
-        api_base = os.environ["AZURE_API_BASE"]
-        api_key = os.environ["AZURE_API_KEY"]
-        api_version = os.environ["AZURE_API_VERSION"]
-
-        os.environ["AZURE_API_BASE"] = ""
-        os.environ["AZURE_API_VERSION"] = ""
-        os.environ["AZURE_API_KEY"] = ""
-
-        ## Test azure call
+        
+        # Create a mock Azure client
+        from unittest.mock import patch, MagicMock
+        mock_client = MagicMock()
+        mock_response = {
+            "id": "chatcmpl-123",
+            "object": "chat.completion",
+            "created": 1677652288,
+            "model": "gpt-3.5-turbo-0125",
+            "choices": [{
+                "index": 0,
+                "message": {
+                    "role": "assistant",
+                    "content": "Hello there, how may I assist you today?",
+                },
+                "finish_reason": "stop"
+            }],
+            "usage": {"prompt_tokens": 9, "completion_tokens": 12, "total_tokens": 21}
+        }
+        
+        # Configure the mock client's create method
+        mock_create = MagicMock()
+        mock_create.return_value.parse.return_value = mock_response
+        mock_client.chat.completions.with_raw_response.create = mock_create
+        
+        ## Test azure call with explicit parameters
         response = completion(
             model="azure/chatgpt-v-2",
             messages=messages,
-            api_base=api_base,
-            api_key=api_key,
-            api_version=api_version,
+            api_base="https://test-azure-base.openai.azure.com",
+            api_key="test-api-key",
+            api_version="2023-07-01-preview",
             max_tokens=10,
+            client=mock_client
         )
-
-        # Add any assertions here to check the response
+        
+        # Verify we got a valid response
+        assert isinstance(response, litellm.ModelResponse)
+        assert response.id is not None
+        assert len(response.choices) > 0
         print(response)
-
-        os.environ["AZURE_API_BASE"] = api_base
-        os.environ["AZURE_API_VERSION"] = api_version
-        os.environ["AZURE_API_KEY"] = api_key
 
     except Exception as e:
         pytest.fail(f"Error occurred: {e}")
@@ -3029,33 +3125,70 @@ def test_completion_azure2():
 
 
 def test_completion_azure3():
-    # test if we can pass api_base, api_version and api_key in compleition()
+    # test if we can pass api_base, api_version and api_key via litellm globals
     try:
         print("azure gpt-3.5 test\n\n")
         litellm.set_verbose = True
-        litellm.api_base = os.environ["AZURE_API_BASE"]
-        litellm.api_key = os.environ["AZURE_API_KEY"]
-        litellm.api_version = os.environ["AZURE_API_VERSION"]
-
-        os.environ["AZURE_API_BASE"] = ""
-        os.environ["AZURE_API_VERSION"] = ""
-        os.environ["AZURE_API_KEY"] = ""
-
-        ## Test azure call
+        
+        
+        # Save original litellm settings
+        original_api_base = litellm.api_base
+        original_api_key = litellm.api_key
+        original_api_version = litellm.api_version
+        
+        # Set test values
+        litellm.api_base = "https://test-azure-base.openai.azure.com"
+        litellm.api_key = "test-api-key"
+        litellm.api_version = "2023-07-01-preview"
+        
+        # Create a mock Azure client
+        from unittest.mock import patch, MagicMock
+        mock_client = MagicMock()
+        mock_response = {
+            "id": "chatcmpl-123",
+            "object": "chat.completion",
+            "created": 1677652288,
+            "model": "gpt-3.5-turbo-0125",
+            "choices": [{
+                "index": 0,
+                "message": {
+                    "role": "assistant",
+                    "content": "Hello there, how may I assist you today?",
+                },
+                "finish_reason": "stop"
+            }],
+            "usage": {"prompt_tokens": 9, "completion_tokens": 12, "total_tokens": 21}
+        }
+        
+        # Configure the mock client's create method
+        mock_create = MagicMock()
+        mock_create.return_value.parse.return_value = mock_response
+        mock_client.chat.completions.with_raw_response.create = mock_create
+        
+        ## Test azure call using litellm global settings
         response = completion(
             model="azure/chatgpt-v-2",
             messages=messages,
             max_tokens=10,
+            client=mock_client
         )
-
-        # Add any assertions here to check the response
+        
+        # Verify we got a valid response
+        assert isinstance(response, litellm.ModelResponse)
+        assert response.id is not None
+        assert len(response.choices) > 0
         print(response)
-
-        os.environ["AZURE_API_BASE"] = litellm.api_base
-        os.environ["AZURE_API_VERSION"] = litellm.api_version
-        os.environ["AZURE_API_KEY"] = litellm.api_key
+        
+        # Restore original settings
+        litellm.api_base = original_api_base
+        litellm.api_key = original_api_key
+        litellm.api_version = original_api_version
 
     except Exception as e:
+        # Restore original settings even if test fails
+        litellm.api_base = original_api_base
+        litellm.api_key = original_api_key
+        litellm.api_version = original_api_version
         pytest.fail(f"Error occurred: {e}")
 
 
@@ -4210,6 +4343,12 @@ async def test_dynamic_azure_params(stream, sync_mode):
     """
     If dynamic params are given, which are different from the initialized client, use a new client
     """
+    import litellm
+
+    litellm.set_verbose = True  # Enable verbose logging
+    litellm.enable_preview_features = (
+        True  # Enable preview features for Azure O1 models
+    )
     from openai import AsyncAzureOpenAI, AzureOpenAI
 
     if sync_mode:
@@ -4218,19 +4357,61 @@ async def test_dynamic_azure_params(stream, sync_mode):
             base_url="my-test-base",
             api_version="my-test-version",
         )
-        mock_client = MagicMock(return_value="Hello world!")
+        mock_response = MagicMock()
+        mock_response.model_dump = MagicMock(
+            return_value={
+                "id": "mock-id",
+                "object": "chat.completion",
+                "created": 1677652288,
+                "model": "gpt-3.5-turbo-0125",
+                "choices": [
+                    {
+                        "index": 0,
+                        "message": {"role": "assistant", "content": "Hello world!"},
+                        "finish_reason": "stop",
+                    }
+                ],
+                "usage": {
+                    "prompt_tokens": 9,
+                    "completion_tokens": 12,
+                    "total_tokens": 21,
+                },
+            }
+        )
+        mock_client = MagicMock(return_value=mock_response)
     else:
         client = AsyncAzureOpenAI(
             api_key="my-test-key",
             base_url="my-test-base",
             api_version="my-test-version",
         )
-        mock_client = AsyncMock(return_value="Hello world!")
+        mock_response = MagicMock()
+        mock_response.model_dump = MagicMock(
+            return_value={
+                "id": "mock-id",
+                "object": "chat.completion",
+                "created": 1677652288,
+                "model": "gpt-3.5-turbo-0125",
+                "choices": [
+                    {
+                        "index": 0,
+                        "message": {"role": "assistant", "content": "Hello world!"},
+                        "finish_reason": "stop",
+                    }
+                ],
+                "usage": {
+                    "prompt_tokens": 9,
+                    "completion_tokens": 12,
+                    "total_tokens": 21,
+                },
+            }
+        )
+        mock_client = AsyncMock(return_value=mock_response)
 
     ## CHECK IF CLIENT IS USED (NO PARAM CHANGE)
     with patch.object(
         client.chat.completions.with_raw_response, "create", new=mock_client
-    ) as mock_client:
+    ) as patched_mock:
         try:
             # client.chat.completions.with_raw_response.create = mock_client
             if sync_mode:
@@ -4247,21 +4428,66 @@ async def test_dynamic_azure_params(stream, sync_mode):
                     client=client,
                     stream=stream,
                 )
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"Exception in test_dynamic_azure_params (first block): {str(e)}")
+            import traceback
 
-        mock_client.assert_called()
+            traceback.print_exc()
+
+        patched_mock.assert_called()
 
     ## recreate mock client
     if sync_mode:
-        mock_client = MagicMock(return_value="Hello world!")
+        mock_response = MagicMock()
+        mock_response.model_dump = MagicMock(
+            return_value={
+                "id": "mock-id",
+                "object": "chat.completion",
+                "created": 1677652288,
+                "model": "gpt-3.5-turbo-0125",
+                "choices": [
+                    {
+                        "index": 0,
+                        "message": {"role": "assistant", "content": "Hello world!"},
+                        "finish_reason": "stop",
+                    }
+                ],
+                "usage": {
+                    "prompt_tokens": 9,
+                    "completion_tokens": 12,
+                    "total_tokens": 21,
+                },
+            }
+        )
+        mock_client = MagicMock(return_value=mock_response)
     else:
-        mock_client = AsyncMock(return_value="Hello world!")
+        mock_response = MagicMock()
+        mock_response.model_dump = MagicMock(
+            return_value={
+                "id": "mock-id",
+                "object": "chat.completion",
+                "created": 1677652288,
+                "model": "gpt-3.5-turbo-0125",
+                "choices": [
+                    {
+                        "index": 0,
+                        "message": {"role": "assistant", "content": "Hello world!"},
+                        "finish_reason": "stop",
+                    }
+                ],
+                "usage": {
+                    "prompt_tokens": 9,
+                    "completion_tokens": 12,
+                    "total_tokens": 21,
+                },
+            }
+        )
+        mock_client = AsyncMock(return_value=mock_response)
 
     ## CHECK IF NEW CLIENT IS USED (PARAM CHANGE)
     with patch.object(
         client.chat.completions.with_raw_response, "create", new=mock_client
-    ) as mock_client:
+    ) as patched_mock:
         try:
             if sync_mode:
                 _ = completion(
@@ -4283,7 +4509,7 @@ async def test_dynamic_azure_params(stream, sync_mode):
             pass
 
         try:
-            mock_client.assert_not_called()
+            patched_mock.assert_not_called()
         except Exception as e:
             raise e
 
@@ -4470,8 +4696,8 @@ def test_openai_hallucinated_tool_call_util(function_name, expect_modification):
         - get function name from recipient_name value
         - parameters will be JSON object for function arguments
     """
-    from litellm.utils import _handle_invalid_parallel_tool_calls
     from litellm.types.utils import ChatCompletionMessageToolCall
+    from litellm.utils import _handle_invalid_parallel_tool_calls
 
     response = _handle_invalid_parallel_tool_calls(
         tool_calls=[

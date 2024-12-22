@@ -5,15 +5,16 @@ Admin sets proxy url + allowed email subdomain
 from dotenv import load_dotenv
 
 load_dotenv()
-import streamlit as st
 import base64
-import os
 import json
+import os
 import uuid
-import requests
+
+import click
 import pandas as pd
 import plotly.express as px
-import click
+import requests
+import streamlit as st
 
 # Replace your_base_url with the actual URL where the proxy auth app is hosted
 your_base_url = os.getenv("BASE_URL")  # Example base URL
@@ -75,8 +76,8 @@ def proxy_setup():
 
 
 def add_new_model():
-    import streamlit as st
     import requests
+    import streamlit as st
 
     if (
         st.session_state.get("api_url", None) is None
@@ -151,8 +152,8 @@ def add_new_model():
 
 
 def list_models():
-    import streamlit as st
     import requests
+    import streamlit as st
 
     # Check if the necessary configuration is available
     if (
@@ -187,8 +188,8 @@ def list_models():
 
 
 def spend_per_key():
-    import streamlit as st
     import requests
+    import streamlit as st
 
     # Check if the necessary configuration is available
     if (
@@ -243,8 +244,8 @@ def spend_per_key():
 
 
 def spend_per_user():
-    import streamlit as st
     import requests
+    import streamlit as st
 
     # Check if the necessary configuration is available
     if (
@@ -299,8 +300,8 @@ def spend_per_user():
 
 
 def create_key():
-    import streamlit as st
     import requests
+    import streamlit as st
 
     if (
         st.session_state.get("api_url", None) is None

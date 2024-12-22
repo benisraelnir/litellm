@@ -7,14 +7,14 @@ sys.path.insert(
     0, os.path.abspath("../..")
 )  # Adds the parent directory to the system-path
 
-import pytest
-from litellm.integrations.langfuse.langfuse import (
-    LangFuseLogger,
-)
-from litellm.integrations.langfuse.langfuse_handler import LangFuseHandler
-from litellm.types.utils import StandardCallbackDynamicParams
-from litellm.litellm_core_utils.litellm_logging import DynamicLoggingCache
 from unittest.mock import Mock, patch
+
+import pytest
+
+from litellm.integrations.langfuse.langfuse import LangFuseLogger
+from litellm.integrations.langfuse.langfuse_handler import LangFuseHandler
+from litellm.litellm_core_utils.litellm_logging import DynamicLoggingCache
+from litellm.types.utils import StandardCallbackDynamicParams
 
 
 @pytest.fixture

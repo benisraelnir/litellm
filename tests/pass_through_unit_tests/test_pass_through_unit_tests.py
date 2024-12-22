@@ -2,39 +2,39 @@ import json
 import os
 import sys
 from datetime import datetime
-from unittest.mock import AsyncMock, Mock, patch, MagicMock
 from typing import Optional
+from unittest.mock import AsyncMock, MagicMock, Mock, patch
 
 sys.path.insert(
     0, os.path.abspath("../..")
 )  # Adds the parent directory to the system path
 
+from typing import AsyncGenerator
+
 import fastapi
-from fastapi import FastAPI
-from fastapi.routing import APIRoute
 import httpx
 import pytest
-import litellm
-from typing import AsyncGenerator
-from litellm.litellm_core_utils.litellm_logging import Logging as LiteLLMLoggingObj
-from litellm.proxy.pass_through_endpoints.types import EndpointType
-from litellm.proxy.pass_through_endpoints.success_handler import (
-    PassThroughEndpointLogging,
-)
-from litellm.proxy.pass_through_endpoints.streaming_handler import (
-    PassThroughStreamingHandler,
-)
+from fastapi import FastAPI, Request
+from fastapi.routing import APIRoute
 
-from litellm.proxy.pass_through_endpoints.pass_through_endpoints import (
-    pass_through_request,
-)
-from fastapi import Request
+import litellm
+from litellm.litellm_core_utils.litellm_logging import Logging as LiteLLMLoggingObj
 from litellm.proxy._types import UserAPIKeyAuth
 from litellm.proxy.pass_through_endpoints.pass_through_endpoints import (
     _init_kwargs_for_pass_through_endpoint,
     _update_metadata_with_tags_in_header,
+    pass_through_request,
 )
-from litellm.proxy.pass_through_endpoints.types import PassthroughStandardLoggingPayload
+from litellm.proxy.pass_through_endpoints.streaming_handler import (
+    PassThroughStreamingHandler,
+)
+from litellm.proxy.pass_through_endpoints.success_handler import (
+    PassThroughEndpointLogging,
+)
+from litellm.proxy.pass_through_endpoints.types import (
+    EndpointType,
+    PassthroughStandardLoggingPayload,
+)
 
 
 @pytest.fixture

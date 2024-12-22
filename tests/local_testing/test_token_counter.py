@@ -1,9 +1,9 @@
 #### What this tests ####
 #    This tests litellm.token_counter() function
-import traceback
 import os
 import sys
 import time
+import traceback
 from unittest.mock import MagicMock
 
 import pytest
@@ -13,6 +13,13 @@ sys.path.insert(
 )  # Adds the parent directory to the system path
 from unittest.mock import AsyncMock, MagicMock, patch
 
+from large_text import text
+from messages_with_counts import (
+    MESSAGES_TEXT,
+    MESSAGES_WITH_IMAGES,
+    MESSAGES_WITH_TOOLS,
+)
+
 import litellm
 from litellm import (
     create_pretrained_tokenizer,
@@ -20,12 +27,6 @@ from litellm import (
     encode,
     get_modified_max_tokens,
     token_counter,
-)
-from large_text import text
-from messages_with_counts import (
-    MESSAGES_TEXT,
-    MESSAGES_WITH_IMAGES,
-    MESSAGES_WITH_TOOLS,
 )
 
 

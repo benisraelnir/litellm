@@ -6,26 +6,27 @@ import os
 import sys
 import traceback
 
-
 sys.path.insert(
     0, os.path.abspath("../..")
 )  # Adds the parent directory to the system path
 
 from dotenv import load_dotenv
 from openai.types.image import Image
+
 from litellm.caching import InMemoryCache
 
 logging.basicConfig(level=logging.DEBUG)
 load_dotenv()
 import asyncio
+import json
+import logging
 import os
+import tempfile
+
 import pytest
+from base_image_generation_test import BaseImageGenTest
 
 import litellm
-import json
-import tempfile
-from base_image_generation_test import BaseImageGenTest
-import logging
 from litellm._logging import verbose_logger
 
 verbose_logger.setLevel(logging.DEBUG)

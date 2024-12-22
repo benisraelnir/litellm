@@ -9,15 +9,22 @@ sys.path.insert(
 )  # Adds the parent directory to the system path
 
 
+from unittest.mock import patch
+
 import httpx
 import pytest
 from respx import MockRouter
 
 import litellm
-from litellm import Choices, Message, ModelResponse, EmbeddingResponse, Usage
-from litellm import completion
-from unittest.mock import patch
-from litellm.llms.xai.chat.transformation import XAIChatConfig, XAI_API_BASE
+from litellm import (
+    Choices,
+    EmbeddingResponse,
+    Message,
+    ModelResponse,
+    Usage,
+    completion,
+)
+from litellm.llms.xai.chat.transformation import XAI_API_BASE, XAIChatConfig
 
 
 def test_xai_chat_config_get_openai_compatible_provider_info():

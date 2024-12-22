@@ -2,8 +2,8 @@
 Prevent usage of 'requests' library in the codebase.
 """
 
-import os
 import ast
+import os
 import sys
 from typing import List, Tuple
 

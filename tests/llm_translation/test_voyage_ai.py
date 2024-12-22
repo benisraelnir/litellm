@@ -3,6 +3,7 @@ import os
 import sys
 from datetime import datetime
 from unittest.mock import AsyncMock
+
 import pytest
 
 sys.path.insert(
@@ -10,10 +11,12 @@ sys.path.insert(
 )  # Adds the parent directory to the system path
 
 
+from unittest.mock import MagicMock, patch
+
 from base_embedding_unit_tests import BaseLLMEmbeddingTest
+
 import litellm
 from litellm.llms.custom_httpx.http_handler import HTTPHandler
-from unittest.mock import patch, MagicMock
 
 
 class TestVoyageAI(BaseLLMEmbeddingTest):

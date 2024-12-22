@@ -7,6 +7,8 @@ sys.path.insert(0, os.path.abspath("../.."))
 import asyncio
 import logging
 import uuid
+from datetime import datetime, timedelta
+from unittest.mock import MagicMock, patch
 
 import pytest
 from prometheus_client import REGISTRY, CollectorRegistry
@@ -17,13 +19,11 @@ from litellm._logging import verbose_logger
 from litellm.integrations.prometheus import PrometheusLogger
 from litellm.llms.custom_httpx.http_handler import AsyncHTTPHandler
 from litellm.types.utils import (
-    StandardLoggingPayload,
-    StandardLoggingMetadata,
     StandardLoggingHiddenParams,
+    StandardLoggingMetadata,
     StandardLoggingModelInformation,
+    StandardLoggingPayload,
 )
-from unittest.mock import MagicMock, patch
-from datetime import datetime, timedelta
 
 verbose_logger.setLevel(logging.DEBUG)
 

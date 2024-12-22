@@ -14,17 +14,17 @@ import os
 sys.path.insert(
     0, os.path.abspath("../..")
 )  # Adds the parent directory to the system path
+from unittest.mock import AsyncMock, MagicMock, patch
+
 import pytest
 
 import litellm
-from litellm.llms.custom_httpx.http_handler import AsyncHTTPHandler, headers
-from litellm.proxy.utils import (
-    duration_in_seconds,
-)
 from litellm.litellm_core_utils.duration_parser import (
-    get_last_day_of_month,
     _extract_from_regex,
+    get_last_day_of_month,
 )
+from litellm.llms.custom_httpx.http_handler import AsyncHTTPHandler, headers
+from litellm.proxy.utils import duration_in_seconds
 from litellm.utils import (
     check_valid_key,
     create_pretrained_tokenizer,
@@ -39,8 +39,6 @@ from litellm.utils import (
     trim_messages,
     validate_environment,
 )
-from unittest.mock import AsyncMock, MagicMock, patch
-
 
 # Assuming your trim_messages, shorten_message_to_fit_limit, and get_token_count functions are all in a module named 'message_utils'
 
@@ -969,6 +967,7 @@ def test_async_http_handler_force_ipv4(mock_async_client):
     This is prod test - we need to ensure that httpx always uses ipv4 when litellm.force_ipv4 is True
     """
     import httpx
+
     from litellm.llms.custom_httpx.http_handler import AsyncHTTPHandler
 
     # Set force_ipv4 to True
@@ -1214,9 +1213,10 @@ def test_token_counter_with_image_url_with_detail_high():
 
     PROD TEST this is importat - Can impact latency very badly
     """
-    from litellm.constants import DEFAULT_IMAGE_TOKEN_COUNT
-    from litellm._logging import verbose_logger
     import logging
+
+    from litellm._logging import verbose_logger
+    from litellm.constants import DEFAULT_IMAGE_TOKEN_COUNT
 
     verbose_logger.setLevel(logging.DEBUG)
 

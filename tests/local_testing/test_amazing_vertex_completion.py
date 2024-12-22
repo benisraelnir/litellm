@@ -18,10 +18,10 @@ import json
 import os
 import tempfile
 from unittest.mock import AsyncMock, MagicMock, patch
-from respx import MockRouter
-import httpx
 
+import httpx
 import pytest
+from respx import MockRouter
 
 import litellm
 from litellm import (
@@ -36,7 +36,6 @@ from litellm.llms.vertex_ai.gemini.transformation import (
     _gemini_convert_messages_with_history,
 )
 from litellm.llms.vertex_ai.vertex_llm_base import VertexBase
-
 
 litellm.num_retries = 3
 litellm.cache = None

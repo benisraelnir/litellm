@@ -8,10 +8,14 @@ import pytest
 sys.path.insert(0, os.path.abspath("../.."))
 
 from typing import Union
+from unittest.mock import AsyncMock, MagicMock, patch
 
 # from litellm.litellm_core_utils.prompt_templates.factory import prompt_factory
 import litellm
 from litellm import completion
+from litellm.litellm_core_utils.prompt_templates.common_utils import (
+    get_completion_messages,
+)
 from litellm.litellm_core_utils.prompt_templates.factory import (
     _bedrock_tools_pt,
     anthropic_messages_pt,
@@ -22,13 +26,9 @@ from litellm.litellm_core_utils.prompt_templates.factory import (
     llama_2_chat_pt,
     prompt_factory,
 )
-from litellm.litellm_core_utils.prompt_templates.common_utils import (
-    get_completion_messages,
-)
 from litellm.llms.vertex_ai.gemini.transformation import (
     _gemini_convert_messages_with_history,
 )
-from unittest.mock import AsyncMock, MagicMock, patch
 
 
 def test_llama_3_prompt():
@@ -327,7 +327,9 @@ def test_bedrock_parallel_tool_calling_pt(provider):
     """
     Make sure parallel tool call blocks are merged correctly - https://github.com/BerriAI/litellm/issues/5277
     """
-    from litellm.litellm_core_utils.prompt_templates.factory import _bedrock_converse_messages_pt
+    from litellm.litellm_core_utils.prompt_templates.factory import (
+        _bedrock_converse_messages_pt,
+    )
     from litellm.types.utils import ChatCompletionMessageToolCall, Function, Message
 
     messages = [
@@ -610,8 +612,9 @@ def test_ensure_alternating_roles(
 
 
 def test_alternating_roles_e2e():
-    from litellm.llms.custom_httpx.http_handler import HTTPHandler
     import json
+
+    from litellm.llms.custom_httpx.http_handler import HTTPHandler
 
     litellm.set_verbose = True
     http_handler = HTTPHandler()
@@ -682,7 +685,9 @@ def test_alternating_roles_e2e():
 
 
 def test_just_system_message():
-    from litellm.litellm_core_utils.prompt_templates.factory import _bedrock_converse_messages_pt
+    from litellm.litellm_core_utils.prompt_templates.factory import (
+        _bedrock_converse_messages_pt,
+    )
 
     with pytest.raises(litellm.BadRequestError) as e:
         _bedrock_converse_messages_pt(

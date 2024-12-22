@@ -13,8 +13,8 @@ sys.path.insert(
     0, os.path.abspath("../..")
 )  # Adds the parent directory to the system path
 
-from unittest.mock import patch, MagicMock, AsyncMock
 import os
+from unittest.mock import AsyncMock, MagicMock, patch
 
 from dotenv import load_dotenv
 
@@ -149,8 +149,9 @@ def test_router_timeout_with_retries_anthropic_model(num_retries, expected_call_
     """
     If request hits custom timeout, ensure it's retried.
     """
-    from litellm.llms.custom_httpx.http_handler import HTTPHandler
     import time
+
+    from litellm.llms.custom_httpx.http_handler import HTTPHandler
 
     litellm.num_retries = num_retries
     litellm.request_timeout = 0.000001

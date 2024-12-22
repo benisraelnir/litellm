@@ -2,17 +2,18 @@ import asyncio
 import os
 import sys
 from unittest.mock import Mock
-from litellm.proxy.utils import _get_redoc_url, _get_docs_url
 
 import pytest
 from fastapi import Request
 
+from litellm.proxy.utils import _get_docs_url, _get_redoc_url
+
 sys.path.insert(
     0, os.path.abspath("../..")
 )  # Adds the parent directory to the system path
-import litellm
-from unittest.mock import MagicMock, patch, AsyncMock
+from unittest.mock import AsyncMock, MagicMock, patch
 
+import litellm
 from litellm.proxy._types import LitellmUserRoles, UserAPIKeyAuth
 from litellm.proxy.auth.auth_utils import is_request_body_safe
 from litellm.proxy.litellm_pre_call_utils import (
@@ -477,8 +478,9 @@ def test_reading_openai_org_id_from_headers():
 )
 def test_add_litellm_data_for_backend_llm_call(headers, expected_data):
     import json
-    from litellm.proxy.litellm_pre_call_utils import LiteLLMProxyRequestSetup
+
     from litellm.proxy._types import UserAPIKeyAuth
+    from litellm.proxy.litellm_pre_call_utils import LiteLLMProxyRequestSetup
 
     user_api_key_dict = UserAPIKeyAuth(
         api_key="test_api_key", user_id="test_user_id", org_id="test_org_id"
@@ -498,8 +500,8 @@ def test_foward_litellm_user_info_to_backend_llm_call():
 
     litellm.add_user_information_to_llm_headers = True
 
-    from litellm.proxy.litellm_pre_call_utils import LiteLLMProxyRequestSetup
     from litellm.proxy._types import UserAPIKeyAuth
+    from litellm.proxy.litellm_pre_call_utils import LiteLLMProxyRequestSetup
 
     user_api_key_dict = UserAPIKeyAuth(
         api_key="test_api_key", user_id="test_user_id", org_id="test_org_id"
@@ -520,10 +522,10 @@ def test_foward_litellm_user_info_to_backend_llm_call():
 
 
 def test_update_internal_user_params():
+    from litellm.proxy._types import NewUserRequest
     from litellm.proxy.management_endpoints.internal_user_endpoints import (
         _update_internal_new_user_params,
     )
-    from litellm.proxy._types import NewUserRequest
 
     litellm.default_internal_user_params = {
         "max_budget": 100,
@@ -547,8 +549,9 @@ def test_update_internal_user_params():
 
 @pytest.mark.asyncio
 async def test_proxy_config_update_from_db():
-    from litellm.proxy.proxy_server import ProxyConfig
     from pydantic import BaseModel
+
+    from litellm.proxy.proxy_server import ProxyConfig
 
     proxy_config = ProxyConfig()
 
@@ -591,10 +594,10 @@ async def test_proxy_config_update_from_db():
 
 
 def test_prepare_key_update_data():
+    from litellm.proxy._types import UpdateKeyRequest
     from litellm.proxy.management_endpoints.key_management_endpoints import (
         prepare_key_update_data,
     )
-    from litellm.proxy._types import UpdateKeyRequest
 
     existing_key_row = MagicMock()
     data = UpdateKeyRequest(key="test_key", models=["gpt-4"], duration="120s")
@@ -888,8 +891,9 @@ def test_enforced_params_check(
 
 
 def test_get_key_models():
-    from litellm.proxy.auth.model_checks import get_key_models
     from collections import defaultdict
+
+    from litellm.proxy.auth.model_checks import get_key_models
 
     user_api_key_dict = UserAPIKeyAuth(
         api_key="test_api_key",
@@ -912,8 +916,9 @@ def test_get_key_models():
 
 
 def test_get_team_models():
-    from litellm.proxy.auth.model_checks import get_team_models
     from collections import defaultdict
+
+    from litellm.proxy.auth.model_checks import get_team_models
 
     user_api_key_dict = UserAPIKeyAuth(
         api_key="test_api_key",

@@ -13,27 +13,28 @@ import asyncio
 sys.path.insert(
     0, os.path.abspath("../..")
 )  # Adds the parent directory to the system path
-import pytest
-from litellm.llms.bedrock.image.cost_calculator import cost_calculator
-from litellm.types.utils import ImageResponse, ImageObject
 import os
+from unittest.mock import MagicMock, patch
+
+import pytest
 
 import litellm
+from litellm.llms.bedrock.image.amazon_stability1_transformation import (
+    AmazonStabilityConfig,
+)
 from litellm.llms.bedrock.image.amazon_stability3_transformation import (
     AmazonStability3Config,
 )
-from litellm.llms.bedrock.image.amazon_stability1_transformation import (
-    AmazonStabilityConfig,
+from litellm.llms.bedrock.image.cost_calculator import cost_calculator
+from litellm.llms.bedrock.image.image_handler import (
+    BedrockImageGeneration,
+    BedrockImagePreparedRequest,
 )
 from litellm.types.llms.bedrock import (
     AmazonStability3TextToImageRequest,
     AmazonStability3TextToImageResponse,
 )
-from unittest.mock import MagicMock, patch
-from litellm.llms.bedrock.image.image_handler import (
-    BedrockImageGeneration,
-    BedrockImagePreparedRequest,
-)
+from litellm.types.utils import ImageObject, ImageResponse
 
 
 @pytest.mark.parametrize(

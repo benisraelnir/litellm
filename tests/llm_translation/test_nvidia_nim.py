@@ -9,14 +9,21 @@ sys.path.insert(
 )  # Adds the parent directory to the system path
 
 
+from unittest.mock import AsyncMock, MagicMock, patch
+
 import httpx
 import pytest
 from respx import MockRouter
-from unittest.mock import patch, MagicMock, AsyncMock
 
 import litellm
-from litellm import Choices, Message, ModelResponse, EmbeddingResponse, Usage
-from litellm import completion
+from litellm import (
+    Choices,
+    EmbeddingResponse,
+    Message,
+    ModelResponse,
+    Usage,
+    completion,
+)
 
 
 def test_completion_nvidia_nim():

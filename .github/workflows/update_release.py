@@ -1,6 +1,7 @@
 import os
-import requests
 from datetime import datetime
+
+import requests
 
 # GitHub API endpoints
 GITHUB_API_URL = "https://api.github.com"

@@ -1,7 +1,6 @@
 import io
 import os
 import sys
-
 from typing import Optional
 
 sys.path.insert(0, os.path.abspath("../.."))

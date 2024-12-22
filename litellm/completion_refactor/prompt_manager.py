@@ -1,9 +1,13 @@
-from typing import Dict, List, Optional, Union, cast
-from litellm.utils import get_completion_messages
-from litellm.types import (
-    ChatCompletionUserMessage,
-    ChatCompletionAssistantMessage
+from typing import Dict, List, Optional
+
+from litellm.litellm_core_utils.prompt_templates.common_utils import (
+    get_completion_messages,
 )
+from litellm.types.llms.openai import (
+    ChatCompletionAssistantMessage,
+    ChatCompletionUserMessage,
+)
+
 
 class PromptManager:
     """
@@ -17,6 +21,7 @@ class PromptManager:
         user_continue_message (Optional[ChatCompletionUserMessage]): Message to continue user context.
         assistant_continue_message (Optional[ChatCompletionAssistantMessage]): Message to continue assistant context.
     """
+
     def __init__(
         self,
         messages: List,
@@ -30,14 +35,14 @@ class PromptManager:
         self.ensure_alternating_roles = ensure_alternating_roles or False
         self.user_continue_message = user_continue_message
         self.assistant_continue_message = assistant_continue_message
-        
+
         # Initialize prompt template components
         self.initial_prompt_value = None
         self.roles = None
         self.final_prompt_value = None
         self.bos_token = None
         self.eos_token = None
-        
+
         # Extract prompt template components if provided
         if custom_prompt_dict:
             for model, config in custom_prompt_dict.items():
@@ -47,14 +52,14 @@ class PromptManager:
                 self.bos_token = config.get("bos_token")
                 self.eos_token = config.get("eos_token")
                 break  # Only use the first model's config for now
-    
+
     def prepare_messages(self, model: str) -> List[Dict[str, str]]:
         """
         Prepare and format messages according to the configuration.
-        
+
         Args:
             model (str): The model name to use for prompt template selection.
-            
+
         Returns:
             List[Dict[str, str]]: Processed and formatted messages ready for completion.
         """
@@ -65,81 +70,73 @@ class PromptManager:
             user_continue_message=self.user_continue_message,
             assistant_continue_message=self.assistant_continue_message,
         )
-        
+
         # Apply custom prompt template if available for the model
         if model in self.custom_prompt_dict:
             processed_messages = self._apply_prompt_template(
-                processed_messages,
-                self.custom_prompt_dict[model]
+                processed_messages, self.custom_prompt_dict[model]
             )
-        
+
         return processed_messages
-    
+
     def _apply_prompt_template(
-        self,
-        messages: List[Dict[str, str]],
-        template_config: Dict
+        self, messages: List[Dict[str, str]], template_config: Dict
     ) -> List[Dict[str, str]]:
         """
         Apply custom prompt template to the messages.
-        
+
         Args:
             messages (List[Dict[str, str]]): Original messages to format.
             template_config (Dict): Template configuration for the specific model.
-            
+
         Returns:
             List[Dict[str, str]]: Messages formatted according to the template.
         """
         formatted_messages = []
-        
+
         # Add initial prompt if specified
         if template_config.get("initial_prompt_value"):
-            formatted_messages.append({
-                "role": "system",
-                "content": template_config["initial_prompt_value"]
-            })
-        
+            formatted_messages.append(
+                {"role": "system", "content": template_config["initial_prompt_value"]}
+            )
+
         # Process each message with custom roles if specified
         roles = template_config.get("roles", {})
         for message in messages:
             role = message["role"]
             content = message["content"]
-            
+
             # Apply role mapping if available
             if roles and role in roles:
                 role = roles[role]
-            
+
             # Apply tokens if specified
             if template_config.get("bos_token"):
                 content = template_config["bos_token"] + content
             if template_config.get("eos_token"):
                 content = content + template_config["eos_token"]
-            
-            formatted_messages.append({
-                "role": role,
-                "content": content
-            })
-        
+
+            formatted_messages.append({"role": role, "content": content})
+
         # Add final prompt if specified
         if template_config.get("final_prompt_value"):
-            formatted_messages.append({
-                "role": "system",
-                "content": template_config["final_prompt_value"]
-            })
-        
+            formatted_messages.append(
+                {"role": "system", "content": template_config["final_prompt_value"]}
+            )
+
         return formatted_messages
-    
+
     def validate_messages(self) -> None:
         """
         Validate message format and structure.
-        
+
         Raises:
             ValueError: If messages are invalid or missing required fields.
             TypeError: If message format is incorrect.
         """
         if not isinstance(self.messages, list):
             raise TypeError("Messages must be a list")
-        
+
         for message in self.messages:
             if not isinstance(message, dict):
                 raise TypeError("Each message must be a dictionary")

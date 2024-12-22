@@ -7,13 +7,15 @@ sys.path.insert(
     0, os.path.abspath("../../")
 )  # Adds the parent directory to the system path
 
-import litellm
-import pytest
 from datetime import timedelta
-from litellm.types.utils import ImageResponse, ImageObject
+
+import pytest
+
+import litellm
 from litellm.litellm_core_utils.llm_response_utils.convert_dict_to_response import (
     LiteLLMResponseObjectHandler,
 )
+from litellm.types.utils import ImageObject, ImageResponse
 
 
 def test_convert_to_image_response_basic():

@@ -2,7 +2,6 @@ import io
 import os
 import sys
 
-
 sys.path.insert(0, os.path.abspath("../.."))
 
 import asyncio
@@ -10,17 +9,18 @@ import gzip
 import json
 import logging
 import time
-from unittest.mock import AsyncMock, patch, MagicMock
-import pytest
 from datetime import datetime, timezone
-from litellm.integrations.langsmith import (
-    LangsmithLogger,
-    LangsmithQueueObject,
-    CredentialsKey,
-    BatchGroup,
-)
+from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
 
 import litellm
+from litellm.integrations.langsmith import (
+    BatchGroup,
+    CredentialsKey,
+    LangsmithLogger,
+    LangsmithQueueObject,
+)
 
 
 # Test get_credentials_from_env
@@ -157,8 +157,9 @@ async def test_make_dot_order():
 # Test is_serializable
 @pytest.mark.asyncio
 async def test_is_serializable():
-    from litellm.integrations.langsmith import is_serializable
     from pydantic import BaseModel
+
+    from litellm.integrations.langsmith import is_serializable
 
     # Test basic types
     assert is_serializable("string") is True

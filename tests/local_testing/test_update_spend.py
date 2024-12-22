@@ -29,6 +29,7 @@ from litellm import Router, mock_completion
 from litellm._logging import verbose_proxy_logger
 from litellm.caching.caching import DualCache
 from litellm.proxy._types import UserAPIKeyAuth
+from litellm.proxy.management_endpoints.customer_endpoints import block_user
 from litellm.proxy.management_endpoints.internal_user_endpoints import (
     new_user,
     user_info,
@@ -42,7 +43,6 @@ from litellm.proxy.management_endpoints.key_management_endpoints import (
     update_key_fn,
 )
 from litellm.proxy.proxy_server import user_api_key_auth
-from litellm.proxy.management_endpoints.customer_endpoints import block_user
 from litellm.proxy.spend_tracking.spend_management_endpoints import (
     spend_key_fn,
     spend_user_fn,

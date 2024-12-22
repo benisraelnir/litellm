@@ -1,14 +1,15 @@
-import sys
 import os
+import sys
 
 sys.path.insert(
     0, os.path.abspath("../../")
 )  # Adds the parent directory to the system path
 
 import pytest
-from litellm.llms.azure.common_utils import process_azure_headers
-from httpx import Headers
 from base_embedding_unit_tests import BaseLLMEmbeddingTest
+from httpx import Headers
+
+from litellm.llms.azure.common_utils import process_azure_headers
 
 
 def test_process_azure_headers_empty():
@@ -97,12 +98,14 @@ def test_process_azure_headers_with_dict_input():
     assert result == expected_output, "Unexpected output for dict input"
 
 
-from httpx import Client
+import os
 from unittest.mock import MagicMock, patch
+
+from httpx import Client
 from openai import AzureOpenAI
+
 import litellm
 from litellm import completion
-import os
 
 
 @pytest.mark.parametrize(

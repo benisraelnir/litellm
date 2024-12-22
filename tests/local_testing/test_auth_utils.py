@@ -1,8 +1,14 @@
 # What is this?
 ## Tests if proxy/auth/auth_utils.py works as expected
 
-import sys, os, asyncio, time, random, uuid
+import asyncio
+import os
+import random
+import sys
+import time
 import traceback
+import uuid
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -12,6 +18,7 @@ sys.path.insert(
     0, os.path.abspath("../..")
 )  # Adds the parent directory to the system path
 import pytest
+
 import litellm
 from litellm.proxy.auth.auth_utils import (
     _allow_model_level_clientside_configurable_parameters,

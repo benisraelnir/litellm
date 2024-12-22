@@ -1,29 +1,35 @@
-import sys, os, time
-import traceback, asyncio
+import asyncio
+import os
+import sys
+import time
+import traceback
+
 import pytest
 
 sys.path.insert(
     0, os.path.abspath("../..")
 )  # Adds the parent directory to the system path
+from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor
+from unittest.mock import AsyncMock, MagicMock, patch
+
+from dotenv import load_dotenv
+
 import litellm
 from litellm import Router
-from litellm.router import Deployment, LiteLLM_Params
-from litellm.types.router import ModelInfo
-from concurrent.futures import ThreadPoolExecutor
-from collections import defaultdict
-from dotenv import load_dotenv
-from unittest.mock import AsyncMock, MagicMock, patch
 from litellm.integrations.prometheus import PrometheusLogger
+from litellm.router import Deployment, LiteLLM_Params
 from litellm.router_utils.cooldown_callbacks import router_cooldown_event_callback
 from litellm.router_utils.cooldown_handlers import (
-    _should_run_cooldown_logic,
     _should_cooldown_deployment,
+    _should_run_cooldown_logic,
     cast_exception_status_to_int,
 )
 from litellm.router_utils.router_callbacks.track_deployment_metrics import (
     increment_deployment_failures_for_current_minute,
     increment_deployment_successes_for_current_minute,
 )
+from litellm.types.router import ModelInfo
 
 load_dotenv()
 
@@ -251,8 +257,9 @@ async def test_should_cooldown_deployment(testing_litellm_router):
     """
     Cooldown a deployment if it fails 60% of requests in 1 minute - DEFAULT threshold is 50%
     """
-    from litellm._logging import verbose_router_logger
     import logging
+
+    from litellm._logging import verbose_router_logger
 
     verbose_router_logger.setLevel(logging.DEBUG)
 
@@ -352,8 +359,8 @@ def test_increment_deployment_successes_for_current_minute_does_not_write_to_red
     Important - If it writes to redis on every request it will seriously impact performance / latency
     """
     from litellm.caching.dual_cache import DualCache
-    from litellm.caching.redis_cache import RedisCache
     from litellm.caching.in_memory_cache import InMemoryCache
+    from litellm.caching.redis_cache import RedisCache
     from litellm.router_utils.router_callbacks.track_deployment_metrics import (
         increment_deployment_successes_for_current_minute,
     )

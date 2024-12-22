@@ -25,7 +25,10 @@ class OpenAITextCompletion(BaseLLM):
             "content-type": "application/json",
         }
         if api_key:
-            headers["Authorization"] = f"Bearer {api_key}"
+            # Ensure api_key is a string and properly encoded
+            api_key_str = str(api_key).strip()
+            if api_key_str:
+                headers["Authorization"] = f"Bearer {api_key_str}"
         return headers
 
     def completion(
@@ -58,7 +61,30 @@ class OpenAITextCompletion(BaseLLM):
                 messages
             )
 
-            data = {"model": model, "prompt": prompt, **optional_params}
+            # Filter parameters for OpenAI text completion
+            valid_openai_params = {
+                "model",
+                "prompt",
+                "suffix",
+                "max_tokens",
+                "temperature",
+                "top_p",
+                "n",
+                "stream",
+                "logprobs",
+                "echo",
+                "stop",
+                "presence_penalty",
+                "frequency_penalty",
+                "best_of",
+                "logit_bias",
+                "user",
+                "seed",
+            }
+            filtered_params = {
+                k: v for k, v in optional_params.items() if k in valid_openai_params
+            }
+            data = {"model": model, "prompt": prompt, **filtered_params}
             max_retries = data.pop("max_retries", 2)
             ## LOGGING
             logging_obj.pre_call(

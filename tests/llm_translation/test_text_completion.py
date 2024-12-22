@@ -7,23 +7,19 @@ sys.path.insert(
     0, os.path.abspath("../..")
 )  # Adds the parent directory to the system path
 
-import litellm
-import pytest
-
-from litellm.utils import (
-    LiteLLMResponseObjectHandler,
-)
-
-
 from datetime import timedelta
 
+import pytest
+
+import litellm
+from litellm.types.utils import Logprobs as TextCompletionLogprobs
 from litellm.types.utils import (
     ModelResponse,
-    TextCompletionResponse,
     TextChoices,
-    Logprobs as TextCompletionLogprobs,
+    TextCompletionResponse,
     Usage,
 )
+from litellm.utils import LiteLLMResponseObjectHandler
 
 
 def test_convert_chat_to_text_completion():

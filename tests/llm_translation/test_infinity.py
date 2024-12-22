@@ -9,8 +9,6 @@ sys.path.insert(
 )  # Adds the parent directory to the system-path
 
 
-import litellm
-
 import json
 import os
 import sys
@@ -19,10 +17,13 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
+import litellm
+
 sys.path.insert(
     0, os.path.abspath("../..")
 )  # Adds the parent directory to the system-path
 from test_rerank import assert_response_shape
+
 import litellm
 
 

@@ -737,7 +737,7 @@ def test_no_retry_when_no_healthy_deployments():
 
 @pytest.mark.asyncio
 async def test_router_retries_model_specific_and_global():
-    from unittest.mock import patch, MagicMock
+    from unittest.mock import MagicMock, patch
 
     litellm.num_retries = 0
     router = Router(
@@ -772,7 +772,8 @@ async def test_router_retries_model_specific_and_global():
 
 @pytest.mark.asyncio
 async def test_router_timeout_model_specific_and_global():
-    from unittest.mock import patch, MagicMock
+    from unittest.mock import MagicMock, patch
+
     from litellm.llms.custom_httpx.http_handler import HTTPHandler
 
     router = Router(

@@ -5,13 +5,13 @@
 PROD TEST - DO NOT Delete this Test
 """
 
-import pytest
 import asyncio
-import aiohttp
 import os
+
+import aiohttp
 import dotenv
-from dotenv import load_dotenv
 import pytest
+from dotenv import load_dotenv
 
 load_dotenv()
 

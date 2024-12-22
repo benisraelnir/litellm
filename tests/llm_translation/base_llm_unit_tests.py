@@ -1,25 +1,26 @@
-import httpx
 import json
-import pytest
+import os
 import sys
 from typing import Any, Dict, List
 from unittest.mock import MagicMock, Mock, patch
-import os
+
+import httpx
+import pytest
 
 sys.path.insert(
     0, os.path.abspath("../..")
 )  # Adds the parent directory to the system path
+# test_example.py
+from abc import ABC, abstractmethod
+
 import litellm
 from litellm.exceptions import BadRequestError
 from litellm.llms.custom_httpx.http_handler import AsyncHTTPHandler, HTTPHandler
 from litellm.utils import (
     CustomStreamWrapper,
-    get_supported_openai_params,
     get_optional_params,
+    get_supported_openai_params,
 )
-
-# test_example.py
-from abc import ABC, abstractmethod
 
 
 def _usage_format_tests(usage: litellm.Usage):
@@ -92,7 +93,7 @@ class BaseLLMChatTest(ABC):
     def test_pydantic_model_input(self):
         litellm.set_verbose = True
 
-        from litellm import completion, Message
+        from litellm import Message, completion
 
         base_completion_call_args = self.get_base_completion_call_args()
         messages = [Message(content="Hello, how are you?", role="user")]
@@ -182,6 +183,7 @@ class BaseLLMChatTest(ABC):
     def test_json_response_pydantic_obj(self):
         litellm.set_verbose = True
         from pydantic import BaseModel
+
         from litellm.utils import supports_response_schema
 
         os.environ["LITELLM_LOCAL_MODEL_COST_MAP"] = "True"

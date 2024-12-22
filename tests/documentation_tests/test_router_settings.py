@@ -1,8 +1,8 @@
+import inspect
 import os
 import re
-import inspect
-from typing import Type
 import sys
+from typing import Type
 
 sys.path.insert(
     0, os.path.abspath("../..")

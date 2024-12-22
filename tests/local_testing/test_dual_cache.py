@@ -13,19 +13,18 @@ sys.path.insert(
     0, os.path.abspath("../..")
 )  # Adds the parent directory to the system path
 import asyncio
+import datetime
 import hashlib
 import random
+from datetime import timedelta
+from unittest.mock import AsyncMock, MagicMock, call, patch
 
 import pytest
 
 import litellm
 from litellm import aembedding, completion, embedding
-from litellm.caching.caching import Cache
-
-from unittest.mock import AsyncMock, patch, MagicMock, call
-import datetime
-from datetime import timedelta
 from litellm.caching import *
+from litellm.caching.caching import Cache
 
 
 @pytest.mark.parametrize("is_async", [True, False])

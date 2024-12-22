@@ -1,13 +1,13 @@
 # What this tests ?
 ## Tests /models and /model/* endpoints
 
-import pytest
 import asyncio
-import aiohttp
 import os
+
+import aiohttp
 import dotenv
-from dotenv import load_dotenv
 import pytest
+from dotenv import load_dotenv
 
 load_dotenv()
 

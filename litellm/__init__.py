@@ -2,42 +2,49 @@
 import warnings
 
 warnings.filterwarnings("ignore", message=".*conflict with protected namespace.*")
+import os
+
 ### INIT VARIABLES ###
 import threading
-import os
-from typing import Callable, List, Optional, Dict, Union, Any, Literal, get_args
-from litellm.llms.custom_httpx.http_handler import AsyncHTTPHandler, HTTPHandler
-from litellm.caching.caching import Cache, DualCache, RedisCache, InMemoryCache
-from litellm.types.llms.bedrock import COHERE_EMBEDDING_INPUT_TYPES
-from litellm.types.utils import ImageObject, BudgetConfig
+from enum import Enum
+from typing import Any, Callable, Dict, List, Literal, Optional, Union, get_args
+
+import dotenv
+import httpx
+
 from litellm._logging import (
-    set_verbose,
     _turn_on_debug,
-    verbose_logger,
-    json_logs,
     _turn_on_json,
+    json_logs,
     log_level,
+    set_verbose,
+    verbose_logger,
 )
+from litellm.caching.caching import Cache, DualCache, InMemoryCache, RedisCache
 from litellm.constants import (
     DEFAULT_BATCH_SIZE,
     DEFAULT_FLUSH_INTERVAL_SECONDS,
-    ROUTER_MAX_FALLBACKS,
     DEFAULT_MAX_RETRIES,
-    DEFAULT_REPLICATE_POLLING_RETRIES,
     DEFAULT_REPLICATE_POLLING_DELAY_SECONDS,
+    DEFAULT_REPLICATE_POLLING_RETRIES,
     LITELLM_CHAT_PROVIDERS,
+    ROUTER_MAX_FALLBACKS,
 )
-from litellm.types.guardrails import GuardrailItem
+from litellm.integrations.custom_logger import CustomLogger
+from litellm.llms.custom_httpx.http_handler import AsyncHTTPHandler, HTTPHandler
 from litellm.proxy._types import (
-    KeyManagementSystem,
     KeyManagementSettings,
+    KeyManagementSystem,
     LiteLLM_UpperboundKeyGenerateParams,
 )
-from litellm.types.utils import StandardKeyGenerationConfig, LlmProviders
-from litellm.integrations.custom_logger import CustomLogger
-import httpx
-import dotenv
-from enum import Enum
+from litellm.types.guardrails import GuardrailItem
+from litellm.types.llms.bedrock import COHERE_EMBEDDING_INPUT_TYPES
+from litellm.types.utils import (
+    BudgetConfig,
+    ImageObject,
+    LlmProviders,
+    StandardKeyGenerationConfig,
+)
 
 litellm_mode = os.getenv("LITELLM_MODE", "DEV")  # "PRODUCTION", "DEV"
 if litellm_mode == "DEV":
@@ -948,49 +955,50 @@ all_embedding_models = (
 ####### IMAGE GENERATION MODELS ###################
 openai_image_generation_models = ["dall-e-2", "dall-e-3"]
 
-from .timeout import timeout
-from .cost_calculator import completion_cost
-from litellm.litellm_core_utils.litellm_logging import Logging, modify_integration
-from litellm.litellm_core_utils.get_llm_provider_logic import get_llm_provider
 from litellm.litellm_core_utils.core_helpers import remove_index_from_tool_calls
+from litellm.litellm_core_utils.get_llm_provider_logic import get_llm_provider
+from litellm.litellm_core_utils.litellm_logging import Logging, modify_integration
 from litellm.litellm_core_utils.token_counter import get_modified_max_tokens
+
+from .cost_calculator import completion_cost
+from .timeout import timeout
 from .utils import (
-    client,
-    exception_type,
-    get_optional_params,
-    get_response_string,
-    token_counter,
-    create_pretrained_tokenizer,
-    create_tokenizer,
-    supports_function_calling,
-    supports_response_schema,
-    supports_parallel_function_calling,
-    supports_vision,
-    supports_audio_input,
-    supports_audio_output,
-    supports_system_messages,
-    get_litellm_params,
-    acreate,
-    get_max_tokens,
-    get_model_info,
-    register_prompt_template,
-    validate_environment,
-    check_valid_key,
-    register_model,
-    encode,
-    decode,
-    _calculate_retry_after,
-    _should_retry,
-    get_supported_openai_params,
-    get_api_base,
-    get_first_chars_messages,
-    ModelResponse,
     EmbeddingResponse,
     ImageResponse,
-    TranscriptionResponse,
-    TextCompletionResponse,
-    get_provider_fields,
+    ModelResponse,
     ModelResponseListIterator,
+    TextCompletionResponse,
+    TranscriptionResponse,
+    _calculate_retry_after,
+    _should_retry,
+    acreate,
+    check_valid_key,
+    client,
+    create_pretrained_tokenizer,
+    create_tokenizer,
+    decode,
+    encode,
+    exception_type,
+    get_api_base,
+    get_first_chars_messages,
+    get_litellm_params,
+    get_max_tokens,
+    get_model_info,
+    get_optional_params,
+    get_provider_fields,
+    get_response_string,
+    get_supported_openai_params,
+    register_model,
+    register_prompt_template,
+    supports_audio_input,
+    supports_audio_output,
+    supports_function_calling,
+    supports_parallel_function_calling,
+    supports_response_schema,
+    supports_system_messages,
+    supports_vision,
+    token_counter,
+    validate_environment,
 )
 
 ALL_LITELLM_RESPONSE_TYPES = [
@@ -1001,119 +1009,114 @@ ALL_LITELLM_RESPONSE_TYPES = [
     TextCompletionResponse,
 ]
 
-from .llms.custom_llm import CustomLLM
-from .llms.openai_like.chat.handler import OpenAILikeChatConfig
-from .llms.galadriel.chat.transformation import GaladrielChatConfig
-from .llms.github.chat.transformation import GithubChatConfig
-from .llms.empower.chat.transformation import EmpowerChatConfig
-from .llms.huggingface.chat.transformation import (
-    HuggingfaceChatConfig as HuggingfaceConfig,
-)
-from .llms.oobabooga.chat.transformation import OobaboogaConfig
-from .llms.maritalk import MaritalkConfig
-from .llms.openrouter.chat.transformation import OpenrouterConfig
+from .llms.ai21.chat.transformation import AI21ChatConfig
+from .llms.ai21.chat.transformation import AI21ChatConfig as AI21Config
 from .llms.anthropic.chat.transformation import AnthropicConfig
+from .llms.anthropic.completion.transformation import AnthropicTextConfig
 from .llms.anthropic.experimental_pass_through.transformation import (
     AnthropicExperimentalPassThroughConfig,
 )
-from .llms.groq.stt.transformation import GroqSTTConfig
-from .llms.anthropic.completion.transformation import AnthropicTextConfig
-from .llms.triton.completion.transformation import TritonConfig
-from .llms.triton.completion.transformation import TritonGenerateConfig
-from .llms.triton.completion.transformation import TritonInferConfig
-from .llms.triton.embedding.transformation import TritonEmbeddingConfig
-from .llms.databricks.chat.transformation import DatabricksConfig
-from .llms.databricks.embed.transformation import DatabricksEmbeddingConfig
-from .llms.predibase.chat.transformation import PredibaseConfig
-from .llms.replicate.chat.transformation import ReplicateConfig
+from .llms.azure_ai.rerank.transformation import AzureAIRerankConfig
+from .llms.clarifai.chat.transformation import ClarifaiConfig
+from .llms.cloudflare.chat.transformation import CloudflareChatConfig
 from .llms.cohere.completion.transformation import CohereTextConfig as CohereConfig
 from .llms.cohere.rerank.transformation import CohereRerankConfig
-from .llms.azure_ai.rerank.transformation import AzureAIRerankConfig
-from .llms.infinity.rerank.transformation import InfinityRerankConfig
-from .llms.clarifai.chat.transformation import ClarifaiConfig
-from .llms.ai21.chat.transformation import AI21ChatConfig, AI21ChatConfig as AI21Config
-from .llms.together_ai.chat import TogetherAIConfig
-from .llms.cloudflare.chat.transformation import CloudflareChatConfig
-from .llms.deprecated_providers.palm import (
-    PalmConfig,
-)  # here to prevent breaking changes
-from .llms.nlp_cloud.chat.handler import NLPCloudConfig
-from .llms.petals.completion.transformation import PetalsConfig
+from .llms.custom_llm import CustomLLM
+from .llms.databricks.chat.transformation import DatabricksConfig
+from .llms.databricks.embed.transformation import DatabricksEmbeddingConfig
 from .llms.deprecated_providers.aleph_alpha import AlephAlphaConfig
+from .llms.deprecated_providers.palm import (  # here to prevent breaking changes
+    PalmConfig,
+)
+from .llms.empower.chat.transformation import EmpowerChatConfig
+from .llms.galadriel.chat.transformation import GaladrielChatConfig
+from .llms.github.chat.transformation import GithubChatConfig
+from .llms.groq.stt.transformation import GroqSTTConfig
+from .llms.huggingface.chat.transformation import (
+    HuggingfaceChatConfig as HuggingfaceConfig,
+)
+from .llms.infinity.rerank.transformation import InfinityRerankConfig
+from .llms.maritalk import MaritalkConfig
+from .llms.nlp_cloud.chat.handler import NLPCloudConfig
+from .llms.oobabooga.chat.transformation import OobaboogaConfig
+from .llms.openai_like.chat.handler import OpenAILikeChatConfig
+from .llms.openrouter.chat.transformation import OpenrouterConfig
+from .llms.petals.completion.transformation import PetalsConfig
+from .llms.predibase.chat.transformation import PredibaseConfig
+from .llms.replicate.chat.transformation import ReplicateConfig
+from .llms.together_ai.chat import TogetherAIConfig
+from .llms.triton.completion.transformation import (
+    TritonConfig,
+    TritonGenerateConfig,
+    TritonInferConfig,
+)
+from .llms.triton.embedding.transformation import TritonEmbeddingConfig
 from .llms.vertex_ai.gemini.vertex_and_google_ai_studio_gemini import (
-    VertexGeminiConfig,
     GoogleAIStudioGeminiConfig,
-    VertexAIConfig,
+)
+from .llms.vertex_ai.gemini.vertex_and_google_ai_studio_gemini import (
     GoogleAIStudioGeminiConfig as GeminiConfig,
 )
-
-
-from .llms.vertex_ai.vertex_embeddings.transformation import (
-    VertexAITextEmbeddingConfig,
+from .llms.vertex_ai.gemini.vertex_and_google_ai_studio_gemini import (
+    VertexAIConfig,
+    VertexGeminiConfig,
 )
+from .llms.vertex_ai.vertex_embeddings.transformation import VertexAITextEmbeddingConfig
 
 vertexAITextEmbeddingConfig = VertexAITextEmbeddingConfig()
 
+from litellm.llms.openai.completion.transformation import OpenAITextCompletionConfig
+
+from .llms.azure_ai.chat.transformation import AzureAIStudioConfig
+from .llms.bedrock.chat.converse_transformation import AmazonConverseConfig
+from .llms.bedrock.chat.invoke_handler import (
+    AmazonCohereChatConfig,
+    bedrock_tool_name_mappings,
+)
+from .llms.bedrock.common_utils import (
+    AmazonAI21Config,
+    AmazonAnthropicClaude3Config,
+    AmazonAnthropicConfig,
+    AmazonBedrockGlobalConfig,
+    AmazonCohereConfig,
+    AmazonLlamaConfig,
+    AmazonMistralConfig,
+    AmazonTitanConfig,
+)
+from .llms.bedrock.embed.amazon_titan_g1_transformation import AmazonTitanG1Config
+from .llms.bedrock.embed.amazon_titan_multimodal_transformation import (
+    AmazonTitanMultimodalEmbeddingG1Config,
+)
+from .llms.bedrock.embed.amazon_titan_v2_transformation import AmazonTitanV2Config
+from .llms.bedrock.embed.cohere_transformation import BedrockCohereEmbeddingConfig
+from .llms.bedrock.image.amazon_stability1_transformation import AmazonStabilityConfig
+from .llms.bedrock.image.amazon_stability3_transformation import AmazonStability3Config
+from .llms.cohere.chat.transformation import CohereChatConfig
+from .llms.deepinfra.chat.transformation import DeepInfraConfig
+from .llms.groq.chat.transformation import GroqChatConfig
+from .llms.mistral.mistral_chat_transformation import MistralConfig
+from .llms.ollama.completion.transformation import OllamaConfig
+from .llms.ollama_chat import OllamaChatConfig
+from .llms.openai.chat.o1_transformation import OpenAIO1Config
+from .llms.openai.openai import MistralEmbeddingConfig, OpenAIConfig
+from .llms.sagemaker.chat.transformation import SagemakerChatConfig
+from .llms.sagemaker.completion.transformation import SagemakerConfig
+from .llms.vertex_ai.vertex_ai_partner_models.ai21.transformation import (
+    VertexAIAi21Config,
+)
 from .llms.vertex_ai.vertex_ai_partner_models.anthropic.transformation import (
     VertexAIAnthropicConfig,
 )
 from .llms.vertex_ai.vertex_ai_partner_models.llama3.transformation import (
     VertexAILlama3Config,
 )
-from .llms.vertex_ai.vertex_ai_partner_models.ai21.transformation import (
-    VertexAIAi21Config,
-)
-
-from .llms.ollama.completion.transformation import OllamaConfig
-from .llms.sagemaker.completion.transformation import SagemakerConfig
-from .llms.sagemaker.chat.transformation import SagemakerChatConfig
-from .llms.ollama_chat import OllamaChatConfig
-from .llms.bedrock.chat.invoke_handler import (
-    AmazonCohereChatConfig,
-    bedrock_tool_name_mappings,
-)
-from .llms.bedrock.chat.converse_transformation import AmazonConverseConfig
-from .llms.bedrock.common_utils import (
-    AmazonTitanConfig,
-    AmazonAI21Config,
-    AmazonAnthropicConfig,
-    AmazonAnthropicClaude3Config,
-    AmazonCohereConfig,
-    AmazonLlamaConfig,
-    AmazonMistralConfig,
-    AmazonBedrockGlobalConfig,
-)
-from .llms.bedrock.image.amazon_stability1_transformation import AmazonStabilityConfig
-from .llms.bedrock.image.amazon_stability3_transformation import AmazonStability3Config
-from .llms.bedrock.embed.amazon_titan_g1_transformation import AmazonTitanG1Config
-from .llms.bedrock.embed.amazon_titan_multimodal_transformation import (
-    AmazonTitanMultimodalEmbeddingG1Config,
-)
-from .llms.bedrock.embed.amazon_titan_v2_transformation import (
-    AmazonTitanV2Config,
-)
-from .llms.cohere.chat.transformation import CohereChatConfig
-from .llms.bedrock.embed.cohere_transformation import BedrockCohereEmbeddingConfig
-from .llms.openai.openai import OpenAIConfig, MistralEmbeddingConfig
-from .llms.deepinfra.chat.transformation import DeepInfraConfig
-from litellm.llms.openai.completion.transformation import OpenAITextCompletionConfig
-from .llms.groq.chat.transformation import GroqChatConfig
 from .llms.voyage.embedding.transformation import VoyageEmbeddingConfig
-from .llms.azure_ai.chat.transformation import AzureAIStudioConfig
-from .llms.mistral.mistral_chat_transformation import MistralConfig
-from .llms.openai.chat.o1_transformation import (
-    OpenAIO1Config,
-)
 
 openAIO1Config = OpenAIO1Config()
-from .llms.openai.chat.gpt_transformation import (
-    OpenAIGPTConfig,
-)
+from .llms.openai.chat.gpt_transformation import OpenAIGPTConfig
 
 openAIGPTConfig = OpenAIGPTConfig()
-from .llms.openai.chat.gpt_audio_transformation import (
-    OpenAIGPTAudioConfig,
-)
+from .llms.openai.chat.gpt_audio_transformation import OpenAIGPTAudioConfig
 
 openAIGPTAudioConfig = OpenAIGPTAudioConfig()
 
@@ -1123,70 +1126,66 @@ from .llms.nvidia_nim.embed import NvidiaNimEmbeddingConfig
 nvidiaNimConfig = NvidiaNimConfig()
 nvidiaNimEmbeddingConfig = NvidiaNimEmbeddingConfig()
 
-from .llms.cerebras.chat import CerebrasConfig
-from .llms.sambanova.chat import SambanovaConfig
+from .assistants.main import *
+from .batch_completion.main import *
+from .batches.main import *
+from .budget_manager import BudgetManager
+from .cost_calculator import cost_per_token, response_cost_calculator
+from .exceptions import (
+    LITELLM_EXCEPTION_TYPES,
+    APIConnectionError,
+    APIError,
+    APIResponseValidationError,
+    AuthenticationError,
+    BadRequestError,
+    BudgetExceededError,
+    ContentPolicyViolationError,
+    ContextWindowExceededError,
+    InternalServerError,
+    InvalidRequestError,
+    JSONSchemaValidationError,
+    MockException,
+    NotFoundError,
+    OpenAIError,
+    RateLimitError,
+    ServiceUnavailableError,
+    Timeout,
+    UnprocessableEntityError,
+    UnsupportedParamsError,
+)
+from .files.main import *
+from .fine_tuning.main import *
+from .integrations import *
 from .llms.ai21.chat.transformation import AI21ChatConfig
+from .llms.azure.azure import AzureOpenAIAssistantsAPIConfig, AzureOpenAIError
+from .llms.azure.chat.gpt_transformation import AzureOpenAIConfig
+from .llms.azure.chat.o1_transformation import AzureOpenAIO1Config
+from .llms.azure.completion.transformation import AzureOpenAITextConfig
+from .llms.cerebras.chat import CerebrasConfig
+from .llms.codestral.completion.transformation import CodestralTextCompletionConfig
+from .llms.deepseek.chat.transformation import DeepSeekChatConfig
 from .llms.fireworks_ai.chat.transformation import FireworksAIConfig
 from .llms.fireworks_ai.embed.fireworks_ai_transformation import (
     FireworksAIEmbeddingConfig,
 )
 from .llms.friendliai.chat.transformation import FriendliaiChatConfig
-from .llms.jina_ai.embedding.transformation import JinaAIEmbeddingConfig
-from .llms.xai.chat.transformation import XAIChatConfig
-from .llms.volcengine import VolcEngineConfig
-from .llms.codestral.completion.transformation import CodestralTextCompletionConfig
-from .llms.azure.azure import (
-    AzureOpenAIError,
-    AzureOpenAIAssistantsAPIConfig,
-)
-
-from .llms.azure.chat.gpt_transformation import AzureOpenAIConfig
-from .llms.azure.completion.transformation import AzureOpenAITextConfig
 from .llms.hosted_vllm.chat.transformation import HostedVLLMChatConfig
-from .llms.vllm.completion.transformation import VLLMConfig
-from .llms.deepseek.chat.transformation import DeepSeekChatConfig
+from .llms.jina_ai.embedding.transformation import JinaAIEmbeddingConfig
 from .llms.lm_studio.chat.transformation import LMStudioChatConfig
 from .llms.lm_studio.embed.transformation import LmStudioEmbeddingConfig
 from .llms.perplexity.chat.transformation import PerplexityChatConfig
-from .llms.azure.chat.o1_transformation import AzureOpenAIO1Config
-from .llms.watsonx.completion.transformation import IBMWatsonXAIConfig
+from .llms.sambanova.chat import SambanovaConfig
+from .llms.vllm.completion.transformation import VLLMConfig
+from .llms.volcengine import VolcEngineConfig
 from .llms.watsonx.chat.transformation import IBMWatsonXChatConfig
+from .llms.watsonx.completion.transformation import IBMWatsonXAIConfig
+from .llms.xai.chat.transformation import XAIChatConfig
 from .main import *  # type: ignore
-from .integrations import *
-from .exceptions import (
-    AuthenticationError,
-    InvalidRequestError,
-    BadRequestError,
-    NotFoundError,
-    RateLimitError,
-    ServiceUnavailableError,
-    OpenAIError,
-    ContextWindowExceededError,
-    ContentPolicyViolationError,
-    BudgetExceededError,
-    APIError,
-    Timeout,
-    APIConnectionError,
-    UnsupportedParamsError,
-    APIResponseValidationError,
-    UnprocessableEntityError,
-    InternalServerError,
-    JSONSchemaValidationError,
-    LITELLM_EXCEPTION_TYPES,
-    MockException,
-)
-from .budget_manager import BudgetManager
 from .proxy.proxy_cli import run_server
-from .router import Router
-from .assistants.main import *
-from .batches.main import *
-from .batch_completion.main import *
-from .rerank_api.main import *
 from .realtime_api.main import _arealtime
-from .fine_tuning.main import *
-from .files.main import *
+from .rerank_api.main import *
+from .router import Router
 from .scheduler import *
-from .cost_calculator import response_cost_calculator, cost_per_token
 
 ### ADAPTERS ###
 from .types.adapter import AdapterItem

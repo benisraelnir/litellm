@@ -7,18 +7,19 @@ sys.path.insert(
     0, os.path.abspath("../../")
 )  # Adds the parent directory to the system path
 
-import litellm
-import pytest
 from datetime import timedelta
-from litellm.utils import convert_to_model_response_object
 
+import pytest
+
+import litellm
 from litellm.types.utils import (
-    ModelResponse,
-    Message,
     Choices,
-    PromptTokensDetailsWrapper,
     CompletionTokensDetailsWrapper,
+    Message,
+    ModelResponse,
+    PromptTokensDetailsWrapper,
 )
+from litellm.utils import convert_to_model_response_object
 
 
 def test_convert_to_model_response_object_basic():
@@ -700,7 +701,8 @@ def test_convert_to_model_response_object_error():
 def test_image_generation_openai_with_pydantic_warning(caplog):
     try:
         import logging
-        from litellm.types.utils import ImageResponse, ImageObject
+
+        from litellm.types.utils import ImageObject, ImageResponse
 
         convert_response_args = {
             "response_object": {

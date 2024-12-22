@@ -9,8 +9,8 @@ from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanE
 
 import litellm
 from litellm._logging import verbose_logger, verbose_proxy_logger
-from litellm.integrations.opentelemetry import OpenTelemetry, OpenTelemetryConfig
 from litellm.integrations.arize_ai import ArizeConfig, ArizeLogger
+from litellm.integrations.opentelemetry import OpenTelemetry, OpenTelemetryConfig
 
 load_dotenv()
 

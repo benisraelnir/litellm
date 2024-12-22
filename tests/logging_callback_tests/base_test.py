@@ -1,23 +1,24 @@
 import asyncio
-import httpx
 import json
-import pytest
+import os
 import sys
 from typing import Any, Dict, List
 from unittest.mock import MagicMock, Mock, patch
-import os
+
+import httpx
+import pytest
 
 sys.path.insert(
     0, os.path.abspath("../..")
 )  # Adds the parent directory to the system path
+# test_example.py
+from abc import ABC, abstractmethod
+
 import litellm
 from litellm.exceptions import BadRequestError
 from litellm.llms.custom_httpx.http_handler import AsyncHTTPHandler, HTTPHandler
-from litellm.utils import CustomStreamWrapper
 from litellm.types.utils import ModelResponse
-
-# test_example.py
-from abc import ABC, abstractmethod
+from litellm.utils import CustomStreamWrapper
 
 
 class BaseLoggingCallbackTest(ABC):
@@ -28,14 +29,14 @@ class BaseLoggingCallbackTest(ABC):
     @pytest.fixture
     def mock_response_obj(self):
         from litellm.types.utils import (
-            ModelResponse,
-            Choices,
-            Message,
             ChatCompletionMessageToolCall,
-            Function,
-            Usage,
+            Choices,
             CompletionTokensDetailsWrapper,
+            Function,
+            Message,
+            ModelResponse,
             PromptTokensDetailsWrapper,
+            Usage,
         )
 
         # Create a mock response object with the structure you need

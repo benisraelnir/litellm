@@ -15,13 +15,14 @@ sys.path.insert(
     0, os.path.abspath("../..")
 )  # Adds the parent directory to the system path
 import pytest
+
 import litellm
 from litellm.llms.azure.azure import get_azure_ad_token_from_oidc
 from litellm.llms.bedrock.chat import BedrockConverseLLM, BedrockLLM
 from litellm.secret_managers.aws_secret_manager_v2 import AWSSecretsManagerV2
 from litellm.secret_managers.main import (
-    get_secret,
     _should_read_secret_from_secret_manager,
+    get_secret,
 )
 
 

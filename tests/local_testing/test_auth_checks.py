@@ -1,8 +1,14 @@
 # What is this?
 ## Tests if 'get_end_user_object' works as expected
 
-import sys, os, asyncio, time, random, uuid
+import asyncio
+import os
+import random
+import sys
+import time
 import traceback
+import uuid
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -11,15 +17,20 @@ import os
 sys.path.insert(
     0, os.path.abspath("../..")
 )  # Adds the parent directory to the system path
-import pytest, litellm
 import httpx
+import pytest
+
+import litellm
+from litellm.caching.caching import DualCache
+from litellm.proxy._types import (
+    LiteLLM_BudgetTable,
+    LiteLLM_EndUserTable,
+    UserAPIKeyAuth,
+)
 from litellm.proxy.auth.auth_checks import (
     _handle_failed_db_connection_for_get_key_object,
+    get_end_user_object,
 )
-from litellm.proxy._types import UserAPIKeyAuth
-from litellm.proxy.auth.auth_checks import get_end_user_object
-from litellm.caching.caching import DualCache
-from litellm.proxy._types import LiteLLM_EndUserTable, LiteLLM_BudgetTable
 from litellm.proxy.utils import PrismaClient
 
 
@@ -106,8 +117,9 @@ async def test_can_key_call_model(model, expect_to_work):
     """
     If wildcard model + specific model is used, choose the specific model settings
     """
-    from litellm.proxy.auth.auth_checks import can_key_call_model
     from fastapi import HTTPException
+
+    from litellm.proxy.auth.auth_checks import can_key_call_model
 
     llm_model_list = [
         {
@@ -159,8 +171,9 @@ async def test_can_key_call_model(model, expect_to_work):
 )
 @pytest.mark.asyncio
 async def test_can_team_call_model(model, expect_to_work):
-    from litellm.proxy.auth.auth_checks import model_in_access_group
     from fastapi import HTTPException
+
+    from litellm.proxy.auth.auth_checks import model_in_access_group
 
     llm_model_list = [
         {

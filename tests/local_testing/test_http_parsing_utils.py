@@ -1,10 +1,11 @@
+import os
+import sys
+
 import pytest
 from fastapi import Request
 from fastapi.testclient import TestClient
 from starlette.datastructures import Headers
 from starlette.requests import HTTPConnection
-import os
-import sys
 
 sys.path.insert(
     0, os.path.abspath("../..")

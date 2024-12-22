@@ -1,18 +1,21 @@
-import sys
 import os
+import sys
 import traceback
+from datetime import datetime
+
 from dotenv import load_dotenv
 from fastapi import Request
-from datetime import datetime
 
 sys.path.insert(
     0, os.path.abspath("../..")
 )  # Adds the parent directory to the system path
-from litellm import Router
+from unittest.mock import AsyncMock, MagicMock, patch
+
 import pytest
-import litellm
-from unittest.mock import patch, MagicMock, AsyncMock
 from create_mock_standard_logging_payload import create_standard_logging_payload
+
+import litellm
+from litellm import Router
 from litellm.types.utils import StandardLoggingPayload
 
 
@@ -851,8 +854,8 @@ def test_get_allowed_fails_from_policy(
 
 def test_initialize_alerting(model_list):
     """Test if the 'initialize_alerting' function is working correctly"""
-    from litellm.types.router import AlertingConfig
     from litellm.integrations.SlackAlerting.slack_alerting import SlackAlerting
+    from litellm.types.router import AlertingConfig
 
     router = Router(
         model_list=model_list, alerting_config=AlertingConfig(webhook_url="test")
@@ -1000,6 +1003,7 @@ def test_pattern_match_deployment_set_model_name(
     user_request_model, model_name, litellm_model, expected_model
 ):
     from re import Match
+
     from litellm.router_utils.pattern_match_deployments import PatternMatchRouter
 
     pattern_router = PatternMatchRouter()

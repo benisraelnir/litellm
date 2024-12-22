@@ -2,24 +2,26 @@ import json
 import os
 import sys
 from datetime import datetime
-from unittest.mock import AsyncMock, Mock, patch, MagicMock
+from unittest.mock import AsyncMock, MagicMock, Mock, patch
 
 sys.path.insert(
     0, os.path.abspath("../..")
 )  # Adds the parent directory to the system path
 
+from typing import AsyncGenerator
+
 import httpx
 import pytest
+
 import litellm
-from typing import AsyncGenerator
 from litellm.litellm_core_utils.litellm_logging import Logging as LiteLLMLoggingObj
-from litellm.proxy.pass_through_endpoints.types import EndpointType
-from litellm.proxy.pass_through_endpoints.success_handler import (
-    PassThroughEndpointLogging,
-)
 from litellm.proxy.pass_through_endpoints.streaming_handler import (
     PassThroughStreamingHandler,
 )
+from litellm.proxy.pass_through_endpoints.success_handler import (
+    PassThroughEndpointLogging,
+)
+from litellm.proxy.pass_through_endpoints.types import EndpointType
 
 
 # Helper function to mock async iteration

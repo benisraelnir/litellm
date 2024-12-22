@@ -6,11 +6,12 @@ Uses supabase passwordless auth: https://supabase.com/docs/reference/python/auth
 Remember to set your redirect url to 8501 (streamlit default).
 """
 
-import streamlit as st
-from dotenv import load_dotenv
-import requests
 import base64
 import binascii
+
+import requests
+import streamlit as st
+from dotenv import load_dotenv
 
 load_dotenv()
 

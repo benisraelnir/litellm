@@ -1,27 +1,28 @@
 import asyncio
-import httpx
 import json
-import pytest
+import os
 import sys
 from typing import Any, Dict, List
 from unittest.mock import MagicMock, Mock, patch
-import os
+
+import httpx
+import pytest
 
 sys.path.insert(
     0, os.path.abspath("../..")
 )  # Adds the parent directory to the system path
+# test_example.py
+from abc import ABC, abstractmethod
+
 import litellm
 from litellm.exceptions import BadRequestError
 from litellm.llms.custom_httpx.http_handler import AsyncHTTPHandler, HTTPHandler
 from litellm.utils import (
     CustomStreamWrapper,
-    get_supported_openai_params,
     get_optional_params,
     get_optional_params_embeddings,
+    get_supported_openai_params,
 )
-
-# test_example.py
-from abc import ABC, abstractmethod
 
 
 class BaseLLMEmbeddingTest(ABC):

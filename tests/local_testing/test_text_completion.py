@@ -4116,9 +4116,7 @@ async def test_async_text_completion_chat_model_stream():
 async def test_completion_codestral_fim_api(model):
     try:
         if model == "vertex_ai/codestral@2405":
-            from test_amazing_vertex_completion import (
-                load_vertex_ai_credentials,
-            )
+            from test_amazing_vertex_completion import load_vertex_ai_credentials
 
             load_vertex_ai_credentials()
 
@@ -4162,9 +4160,7 @@ async def test_completion_codestral_fim_api(model):
 async def test_completion_codestral_fim_api_stream(model):
     try:
         if model == "vertex_ai/codestral@2405":
-            from test_amazing_vertex_completion import (
-                load_vertex_ai_credentials,
-            )
+            from test_amazing_vertex_completion import load_vertex_ai_credentials
 
             load_vertex_ai_credentials()
         import logging

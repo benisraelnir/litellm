@@ -40,6 +40,7 @@ import pytest
 
 import litellm
 from litellm._logging import verbose_proxy_logger
+from litellm.proxy.management_endpoints.customer_endpoints import new_end_user
 from litellm.proxy.management_endpoints.internal_user_endpoints import (
     new_user,
     user_info,
@@ -69,14 +70,11 @@ from litellm.proxy.proxy_server import (
     moderations,
     user_api_key_auth,
 )
-from litellm.proxy.management_endpoints.customer_endpoints import (
-    new_end_user,
-)
 from litellm.proxy.spend_tracking.spend_management_endpoints import (
     global_spend,
+    global_spend_keys,
     global_spend_logs,
     global_spend_models,
-    global_spend_keys,
     spend_key_fn,
     spend_user_fn,
     view_spend_logs,
@@ -91,7 +89,6 @@ from litellm.caching.caching import DualCache
 from litellm.proxy._types import (
     DynamoDBArgs,
     GenerateKeyRequest,
-    RegenerateKeyRequest,
     KeyRequest,
     LiteLLM_UpperboundKeyGenerateParams,
     NewCustomerRequest,
@@ -99,6 +96,7 @@ from litellm.proxy._types import (
     NewUserRequest,
     ProxyErrorTypes,
     ProxyException,
+    RegenerateKeyRequest,
     UpdateKeyRequest,
     UpdateTeamRequest,
     UpdateUserRequest,

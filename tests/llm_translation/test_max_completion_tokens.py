@@ -7,13 +7,15 @@ sys.path.insert(
 )  # Adds the parent directory to the system path
 from datetime import datetime
 from unittest.mock import AsyncMock
+
 from dotenv import load_dotenv
 
 load_dotenv()
+from unittest.mock import AsyncMock, MagicMock, patch
+
 import httpx
 import pytest
 from respx import MockRouter
-from unittest.mock import patch, MagicMock, AsyncMock
 
 import litellm
 from litellm import Choices, Message, ModelResponse
@@ -154,9 +156,7 @@ def test_all_model_configs():
         {"max_completion_tokens": 10}, {}, "llama3", drop_params=False
     ) == {"max_tokens": 10}
 
-    from litellm.llms.fireworks_ai.chat.transformation import (
-        FireworksAIConfig,
-    )
+    from litellm.llms.fireworks_ai.chat.transformation import FireworksAIConfig
 
     assert "max_completion_tokens" in FireworksAIConfig().get_supported_openai_params(
         model="llama3"
@@ -352,8 +352,8 @@ def test_all_model_configs():
     ) == {"max_tokens": 10}
 
     from litellm.llms.vertex_ai.gemini.vertex_and_google_ai_studio_gemini import (
-        VertexAIConfig,
         GoogleAIStudioGeminiConfig,
+        VertexAIConfig,
         VertexGeminiConfig,
     )
 

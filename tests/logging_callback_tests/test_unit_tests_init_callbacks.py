@@ -8,35 +8,35 @@ sys.path.insert(
     0, os.path.abspath("../..")
 )  # Adds the parent directory to the system-path
 
-from typing import Literal
-
-import pytest
-import litellm
 import asyncio
 import logging
-from litellm._logging import verbose_logger
+from typing import Literal
+from unittest.mock import patch
+
+import pytest
 from prometheus_client import REGISTRY, CollectorRegistry
 
-from litellm.integrations.lago import LagoLogger
-from litellm.integrations.openmeter import OpenMeterLogger
+import litellm
+from litellm._logging import verbose_logger
+from litellm.integrations.argilla import ArgillaLogger
+from litellm.integrations.azure_storage.azure_storage import AzureBlobStorageLogger
 from litellm.integrations.braintrust_logging import BraintrustLogger
-from litellm.integrations.galileo import GalileoObserve
-from litellm.integrations.langsmith import LangsmithLogger
-from litellm.integrations.literal_ai import LiteralAILogger
-from litellm.integrations.prometheus import PrometheusLogger
 from litellm.integrations.datadog.datadog import DataDogLogger
 from litellm.integrations.datadog.datadog_llm_obs import DataDogLLMObsLogger
+from litellm.integrations.galileo import GalileoObserve
 from litellm.integrations.gcs_bucket.gcs_bucket import GCSBucketLogger
-from litellm.integrations.opik.opik import OpikLogger
-from litellm.integrations.opentelemetry import OpenTelemetry
-from litellm.integrations.mlflow import MlflowLogger
-from litellm.integrations.argilla import ArgillaLogger
+from litellm.integrations.lago import LagoLogger
 from litellm.integrations.langfuse.langfuse_prompt_management import (
     LangfusePromptManagement,
 )
-from litellm.integrations.azure_storage.azure_storage import AzureBlobStorageLogger
+from litellm.integrations.langsmith import LangsmithLogger
+from litellm.integrations.literal_ai import LiteralAILogger
+from litellm.integrations.mlflow import MlflowLogger
+from litellm.integrations.openmeter import OpenMeterLogger
+from litellm.integrations.opentelemetry import OpenTelemetry
+from litellm.integrations.opik.opik import OpikLogger
+from litellm.integrations.prometheus import PrometheusLogger
 from litellm.proxy.hooks.dynamic_rate_limiter import _PROXY_DynamicRateLimitHandler
-from unittest.mock import patch
 
 # clear prometheus collectors / registry
 collectors = list(REGISTRY._collector_to_names.keys())
@@ -223,9 +223,9 @@ async def test_init_custom_logger_compatible_class_as_callback():
 
 
 def test_dynamic_logging_global_callback():
-    from litellm.litellm_core_utils.litellm_logging import Logging as LiteLLMLoggingObj
     from litellm.integrations.custom_logger import CustomLogger
-    from litellm.types.utils import ModelResponse, Choices, Message, Usage
+    from litellm.litellm_core_utils.litellm_logging import Logging as LiteLLMLoggingObj
+    from litellm.types.utils import Choices, Message, ModelResponse, Usage
 
     cl = CustomLogger()
 

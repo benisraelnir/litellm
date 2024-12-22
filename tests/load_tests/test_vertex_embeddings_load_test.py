@@ -3,18 +3,20 @@ Load test on vertex AI embeddings to ensure vertex median response time is less 
 
 """
 
-import sys
 import os
+import sys
 
 sys.path.insert(0, os.path.abspath("../.."))
 
 import asyncio
-import litellm
-import pytest
-import time
-from statistics import mean, median
 import json
 import tempfile
+import time
+from statistics import mean, median
+
+import pytest
+
+import litellm
 
 
 def load_vertex_ai_credentials():

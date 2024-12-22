@@ -1,10 +1,12 @@
 import asyncio
 import os
 import sys
-from unittest.mock import Mock, patch, AsyncMock
+from unittest.mock import AsyncMock, Mock, patch
+
 import pytest
 from fastapi import Request
-from litellm.proxy.utils import _get_redoc_url, _get_docs_url
+
+from litellm.proxy.utils import _get_docs_url, _get_redoc_url
 
 sys.path.insert(0, os.path.abspath("../.."))
 import litellm

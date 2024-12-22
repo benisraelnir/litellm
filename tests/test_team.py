@@ -1,11 +1,13 @@
 # What this tests ?
 ## Tests /team endpoints.
-import pytest
 import asyncio
-import aiohttp
-import time, uuid
-from openai import AsyncOpenAI
+import time
+import uuid
 from typing import Optional
+
+import aiohttp
+import pytest
+from openai import AsyncOpenAI
 
 
 async def get_user_info(session, get_user, call_user, view_all: Optional[bool] = None):

@@ -13,11 +13,9 @@ sys.path.insert(
     0, os.path.abspath("../..")
 )  # Adds the parent directory to the system path
 import pytest
-import litellm
 
-import pytest
-from litellm.llms.triton.embedding.transformation import TritonEmbeddingConfig
 import litellm
+from litellm.llms.triton.embedding.transformation import TritonEmbeddingConfig
 
 
 def test_split_embedding_by_shape_passes():

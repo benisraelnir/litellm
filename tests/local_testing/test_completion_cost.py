@@ -8,11 +8,12 @@ sys.path.insert(
     0, os.path.abspath("../..")
 )  # Adds the parent directory to the system path
 import asyncio
+import base64
 import os
 import time
 from typing import Optional
 from unittest.mock import AsyncMock, MagicMock, patch
-import base64
+
 import pytest
 
 import litellm
@@ -24,8 +25,8 @@ from litellm import (
     model_cost,
     open_ai_chat_completion_models,
 )
-from litellm.types.utils import PromptTokensDetails
 from litellm.litellm_core_utils.litellm_logging import CustomLogger
+from litellm.types.utils import PromptTokensDetails
 
 
 class CustomLoggingHandler(CustomLogger):
@@ -1324,12 +1325,12 @@ def test_completion_cost_fireworks_ai(model):
 
 
 def test_cost_azure_openai_prompt_caching():
-    from litellm.utils import Choices, Message, ModelResponse, Usage
-    from litellm.types.utils import (
-        PromptTokensDetailsWrapper,
-        CompletionTokensDetailsWrapper,
-    )
     from litellm import get_model_info
+    from litellm.types.utils import (
+        CompletionTokensDetailsWrapper,
+        PromptTokensDetailsWrapper,
+    )
+    from litellm.utils import Choices, Message, ModelResponse, Usage
 
     os.environ["LITELLM_LOCAL_MODEL_COST_MAP"] = "True"
     litellm.model_cost = litellm.get_model_cost_map(url="")
@@ -1459,8 +1460,8 @@ def test_completion_cost_vertex_llama3():
 
 
 def test_cost_openai_prompt_caching():
-    from litellm.utils import Choices, Message, ModelResponse, Usage
     from litellm import get_model_info
+    from litellm.utils import Choices, Message, ModelResponse, Usage
 
     os.environ["LITELLM_LOCAL_MODEL_COST_MAP"] = "True"
     litellm.model_cost = litellm.get_model_cost_map(url="")
@@ -2435,9 +2436,8 @@ def test_completion_cost_params_2():
 
 
 def test_completion_cost_params_gemini_3():
-    from litellm.utils import Choices, Message, ModelResponse, Usage
-
     from litellm.litellm_core_utils.llm_cost_calc.google import cost_per_character
+    from litellm.utils import Choices, Message, ModelResponse, Usage
 
     os.environ["LITELLM_LOCAL_MODEL_COST_MAP"] = "True"
     litellm.model_cost = litellm.get_model_cost_map(url="")
@@ -2512,14 +2512,14 @@ async def test_test_completion_cost_gpt4o_audio_output_from_model(stream):
     os.environ["LITELLM_LOCAL_MODEL_COST_MAP"] = "True"
     litellm.model_cost = litellm.get_model_cost_map(url="")
     from litellm.types.utils import (
+        ChatCompletionAudioResponse,
         Choices,
+        CompletionTokensDetailsWrapper,
         Message,
         ModelResponse,
-        Usage,
-        ChatCompletionAudioResponse,
         PromptTokensDetails,
-        CompletionTokensDetailsWrapper,
         PromptTokensDetailsWrapper,
+        Usage,
     )
 
     usage_object = Usage(
@@ -2659,7 +2659,7 @@ def test_completion_cost_azure_tts():
 
 def test_select_model_name_for_cost_calc():
     from litellm.cost_calculator import _select_model_name_for_cost_calc
-    from litellm.types.utils import ModelResponse, Choices, Usage, Message
+    from litellm.types.utils import Choices, Message, ModelResponse, Usage
 
     args = {
         "model": "Mistral-large-nmefg",

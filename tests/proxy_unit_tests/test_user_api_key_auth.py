@@ -7,18 +7,19 @@ import sys
 sys.path.insert(
     0, os.path.abspath("../..")
 )  # Adds the parent directory to the system path
+import logging
 from typing import Dict, List, Optional
-from unittest.mock import MagicMock, patch, AsyncMock
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from starlette.datastructures import URL
-from litellm._logging import verbose_proxy_logger
-import logging
+
 import litellm
+from litellm._logging import verbose_proxy_logger
 from litellm.proxy.auth.user_api_key_auth import (
-    user_api_key_auth,
     UserAPIKeyAuth,
     get_api_key_from_custom_header,
+    user_api_key_auth,
 )
 
 
@@ -142,9 +143,10 @@ async def test_check_blocked_team():
     ],
 )
 def test_returned_user_api_key_auth(user_role, expected_role):
+    from datetime import datetime
+
     from litellm.proxy._types import LiteLLM_UserTable, LitellmUserRoles
     from litellm.proxy.auth.user_api_key_auth import _return_user_api_key_auth_obj
-    from datetime import datetime
 
     new_obj = _return_user_api_key_auth_obj(
         user_obj=LiteLLM_UserTable(
@@ -174,8 +176,8 @@ async def test_aaauser_personal_budgets(key_ownership):
 
     from fastapi import Request
     from starlette.datastructures import URL
-    import litellm
 
+    import litellm
     from litellm.proxy._types import LiteLLM_UserTable, UserAPIKeyAuth
     from litellm.proxy.auth.user_api_key_auth import user_api_key_auth
     from litellm.proxy.proxy_server import hash_token, user_api_key_cache
@@ -325,8 +327,8 @@ async def test_auth_with_allowed_routes(route, should_raise_error):
     ],
 )
 def test_is_ui_route_allowed(route, user_role, expected_result):
-    from litellm.proxy.auth.user_api_key_auth import _is_ui_route
     from litellm.proxy._types import LiteLLM_UserTable
+    from litellm.proxy.auth.user_api_key_auth import _is_ui_route
 
     user_obj = LiteLLM_UserTable(
         user_id="3b803c0e-666e-4e99-bd5c-6e534c07e297",
@@ -363,8 +365,8 @@ def test_is_ui_route_allowed(route, user_role, expected_result):
     ],
 )
 def test_is_api_route_allowed(route, user_role, expected_result):
-    from litellm.proxy.auth.user_api_key_auth import _is_api_route_allowed
     from litellm.proxy._types import LiteLLM_UserTable
+    from litellm.proxy.auth.user_api_key_auth import _is_api_route_allowed
 
     user_obj = LiteLLM_UserTable(
         user_id="3b803c0e-666e-4e99-bd5c-6e534c07e297",
@@ -471,8 +473,8 @@ from litellm.proxy._types import LitellmUserRoles
 def test_allowed_route_inside_route(
     user_role, auth_user_id, requested_user_id, expected_result
 ):
+    from litellm.proxy._types import LitellmUserRoles, UserAPIKeyAuth
     from litellm.proxy.auth.auth_checks import allowed_route_check_inside_route
-    from litellm.proxy._types import UserAPIKeyAuth, LitellmUserRoles
 
     assert (
         allowed_route_check_inside_route(
@@ -484,8 +486,9 @@ def test_allowed_route_inside_route(
 
 
 def test_read_request_body():
-    from litellm.proxy.common_utils.http_parsing_utils import _read_request_body
     from fastapi import Request
+
+    from litellm.proxy.common_utils.http_parsing_utils import _read_request_body
 
     payload = "()" * 1000000
     request = Request(scope={"type": "http"})
@@ -507,10 +510,11 @@ async def test_auth_with_form_data_and_model():
     """
     from fastapi import Request
     from starlette.datastructures import URL, FormData
+
     from litellm.proxy.proxy_server import (
         hash_token,
-        user_api_key_cache,
         user_api_key_auth,
+        user_api_key_cache,
     )
 
     # Setup

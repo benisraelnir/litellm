@@ -24,8 +24,7 @@ import pytest
 from respx import MockRouter
 
 import litellm
-from litellm import Choices, Message, ModelResponse, TextCompletionResponse, TextChoices
-
+from litellm import Choices, Message, ModelResponse, TextChoices, TextCompletionResponse
 from litellm.litellm_core_utils.litellm_logging import (
     _assemble_complete_response_from_streaming_chunks,
 )

@@ -1,9 +1,11 @@
 # What this tests ?
 ## Tests /organization endpoints.
-import pytest
 import asyncio
+import time
+import uuid
+
 import aiohttp
-import time, uuid
+import pytest
 from openai import AsyncOpenAI
 
 

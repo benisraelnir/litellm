@@ -1,8 +1,8 @@
+import datetime as dt
 import os
 import sys
 import traceback
 import uuid
-import datetime as dt
 from datetime import datetime
 
 from dotenv import load_dotenv
@@ -14,7 +14,6 @@ import io
 import os
 import time
 
-
 # this file is to test litellm/proxy
 
 sys.path.insert(
@@ -23,16 +22,16 @@ sys.path.insert(
 import asyncio
 import logging
 
-from fastapi import HTTPException, Request
 import pytest
-from litellm.proxy.auth.route_checks import RouteChecks
-from litellm.proxy._types import LiteLLM_UserTable, LitellmUserRoles, UserAPIKeyAuth
-from litellm.proxy.pass_through_endpoints.llm_passthrough_endpoints import (
-    router as llm_passthrough_router,
-)
+from fastapi import HTTPException, Request
 
 # Replace the actual hash_token function with our mock
 import litellm.proxy.auth.route_checks
+from litellm.proxy._types import LiteLLM_UserTable, LitellmUserRoles, UserAPIKeyAuth
+from litellm.proxy.auth.route_checks import RouteChecks
+from litellm.proxy.pass_through_endpoints.llm_passthrough_endpoints import (
+    router as llm_passthrough_router,
+)
 
 
 # Mock objects and functions

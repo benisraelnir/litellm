@@ -1,15 +1,13 @@
-import pytest
-import asyncio
-import aiohttp, openai
-from openai import OpenAI, AsyncOpenAI
-from typing import Optional, List, Union
-
-import aiohttp
 import asyncio
 import json
 import os
-import dotenv
+from typing import List, Optional, Union
 
+import aiohttp
+import dotenv
+import openai
+import pytest
+from openai import AsyncOpenAI, OpenAI
 
 dotenv.load_dotenv()
 

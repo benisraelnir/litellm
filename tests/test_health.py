@@ -1,9 +1,10 @@
 # What this tests?
 ## Tests /health + /routes endpoints.
 
-import pytest
 import asyncio
+
 import aiohttp
+import pytest
 
 
 async def health(session, call_key):

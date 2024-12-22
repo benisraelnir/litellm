@@ -1,10 +1,11 @@
 # %%
 import asyncio
 import os
-import pytest
 import random
-from typing import Any
 import sys
+from typing import Any
+
+import pytest
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -14,7 +15,8 @@ sys.path.insert(
 )  # Adds the parent directory to the system path
 
 from pydantic import BaseModel
-from litellm import utils, Router
+
+from litellm import Router, utils
 
 COMPLETION_TOKENS = 5
 base_model_list = [

@@ -1,9 +1,11 @@
-import pytest
 import asyncio
-import aiohttp, openai
-from openai import OpenAI, AsyncOpenAI
-from typing import Optional, List, Union
 import uuid
+from typing import List, Optional, Union
+
+import aiohttp
+import openai
+import pytest
+from openai import AsyncOpenAI, OpenAI
 
 
 async def make_moderations_curl_request(

@@ -1,8 +1,8 @@
+import datetime as dt
 import os
 import sys
 import traceback
 import uuid
-import datetime as dt
 from datetime import datetime
 
 from dotenv import load_dotenv
@@ -23,15 +23,16 @@ import asyncio
 import logging
 
 import pytest
+
 import litellm
 from litellm._logging import verbose_proxy_logger
-from litellm.proxy.management_endpoints.team_endpoints import list_team
 from litellm.proxy._types import *
+from litellm.proxy.management_endpoints.customer_endpoints import new_end_user
 from litellm.proxy.management_endpoints.internal_user_endpoints import (
+    get_users,
     new_user,
     user_info,
     user_update,
-    get_users,
 )
 from litellm.proxy.management_endpoints.key_management_endpoints import (
     delete_key_fn,
@@ -42,6 +43,7 @@ from litellm.proxy.management_endpoints.key_management_endpoints import (
     update_key_fn,
 )
 from litellm.proxy.management_endpoints.team_endpoints import (
+    list_team,
     new_team,
     team_info,
     update_team,
@@ -57,14 +59,11 @@ from litellm.proxy.proxy_server import (
     moderations,
     user_api_key_auth,
 )
-from litellm.proxy.management_endpoints.customer_endpoints import (
-    new_end_user,
-)
 from litellm.proxy.spend_tracking.spend_management_endpoints import (
     global_spend,
+    global_spend_keys,
     global_spend_logs,
     global_spend_models,
-    global_spend_keys,
     spend_key_fn,
     spend_user_fn,
     view_spend_logs,
@@ -86,8 +85,8 @@ from litellm.proxy._types import (
     NewUserRequest,
     ProxyErrorTypes,
     ProxyException,
-    UpdateKeyRequest,
     RegenerateKeyRequest,
+    UpdateKeyRequest,
     UpdateTeamRequest,
     UpdateUserRequest,
     UserAPIKeyAuth,
@@ -552,11 +551,12 @@ def test_is_team_key():
 
 
 def test_team_key_generation_team_member_check():
+    from fastapi import HTTPException
+
+    from litellm.proxy._types import LiteLLM_TeamTableCachedObj
     from litellm.proxy.management_endpoints.key_management_endpoints import (
         _team_key_generation_check,
     )
-    from fastapi import HTTPException
-    from litellm.proxy._types import LiteLLM_TeamTableCachedObj
 
     litellm.key_generation_settings = {
         "team_key_generation": {"allowed_team_member_roles": ["admin"]}
@@ -614,17 +614,18 @@ def test_team_key_generation_team_member_check():
 def test_key_generation_required_params_check(
     team_key_generation_settings, input_data, expected_result, key_type
 ):
+    from fastapi import HTTPException
+
+    from litellm.proxy._types import LiteLLM_TeamTableCachedObj
     from litellm.proxy.management_endpoints.key_management_endpoints import (
-        _team_key_generation_check,
         _personal_key_generation_check,
+        _team_key_generation_check,
     )
     from litellm.types.utils import (
-        TeamUIKeyGenerationConfig,
-        StandardKeyGenerationConfig,
         PersonalUIKeyGenerationConfig,
+        StandardKeyGenerationConfig,
+        TeamUIKeyGenerationConfig,
     )
-    from litellm.proxy._types import LiteLLM_TeamTableCachedObj
-    from fastapi import HTTPException
 
     user_api_key_dict = UserAPIKeyAuth(
         user_role=LitellmUserRoles.INTERNAL_USER,
@@ -668,10 +669,11 @@ def test_key_generation_required_params_check(
 
 
 def test_personal_key_generation_check():
+    from fastapi import HTTPException
+
     from litellm.proxy.management_endpoints.key_management_endpoints import (
         _personal_key_generation_check,
     )
-    from fastapi import HTTPException
 
     litellm.key_generation_settings = {
         "personal_key_generation": {"allowed_user_roles": ["proxy_admin"]}

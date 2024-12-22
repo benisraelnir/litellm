@@ -8,13 +8,15 @@ sys.path.insert(
     0, os.path.abspath("../..")
 )  # Adds the parent directory to the system-path
 
-import pytest
-import litellm
-from litellm.integrations.opentelemetry import OpenTelemetry, OpenTelemetryConfig, Span
 import asyncio
 import logging
+
+import pytest
 from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
+
+import litellm
 from litellm._logging import verbose_logger
+from litellm.integrations.opentelemetry import OpenTelemetry, OpenTelemetryConfig, Span
 from litellm.proxy._types import SpanAttributes
 
 verbose_logger.setLevel(logging.DEBUG)

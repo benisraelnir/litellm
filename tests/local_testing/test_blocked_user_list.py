@@ -32,6 +32,7 @@ from litellm.proxy._types import UserAPIKeyAuth
 from litellm.proxy.enterprise.enterprise_hooks.blocked_user_list import (
     _ENTERPRISE_BlockedUserList,
 )
+from litellm.proxy.management_endpoints.customer_endpoints import block_user
 from litellm.proxy.management_endpoints.internal_user_endpoints import (
     new_user,
     user_info,
@@ -45,7 +46,6 @@ from litellm.proxy.management_endpoints.key_management_endpoints import (
     update_key_fn,
 )
 from litellm.proxy.proxy_server import user_api_key_auth
-from litellm.proxy.management_endpoints.customer_endpoints import block_user
 from litellm.proxy.spend_tracking.spend_management_endpoints import (
     spend_key_fn,
     spend_user_fn,

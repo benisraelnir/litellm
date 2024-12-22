@@ -16,11 +16,11 @@ import logging
 import time
 
 import pytest
+from test_gcs_bucket import load_vertex_ai_credentials
 
 import litellm
 from litellm import create_batch, create_file
 from litellm._logging import verbose_logger
-from test_gcs_bucket import load_vertex_ai_credentials
 
 verbose_logger.setLevel(logging.DEBUG)
 

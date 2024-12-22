@@ -1061,7 +1061,7 @@ def test_cohere_img_embeddings(input, input_type):
 async def test_embedding_with_extra_headers(sync_mode):
 
     input = ["hello world"]
-    from litellm.llms.custom_httpx.http_handler import HTTPHandler, AsyncHTTPHandler
+    from litellm.llms.custom_httpx.http_handler import AsyncHTTPHandler, HTTPHandler
 
     if sync_mode:
         client = HTTPHandler()
