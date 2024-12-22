@@ -88,9 +88,24 @@ class ProviderRouter:
                     if not api_key:
                         raise ValueError("No OpenAI API key found for client")
                     self.client.api_key = api_key
-                # Ensure we're not using any Azure keys
-                if "AZURE" in str(self.client.api_key).upper():
+                # Ensure we're not using any Azure keys and key is valid
+                api_key = (
+                    self.client.api_key
+                    or api_key
+                    or litellm.openai_key
+                    or litellm.api_key
+                    or os.getenv("OPENAI_API_KEY")
+                )
+                if not api_key:
+                    raise ValueError("No OpenAI API key found")
+                
+                api_key_str = str(api_key).upper()
+                print(f"\nValidating key format: {api_key_str[:4]}...{api_key_str[-4:]}")
+                if "AZURE" in api_key_str and not api_key_str.startswith("SK-"):
                     raise ValueError("Azure API key detected but OpenAI key required")
+                
+                # Update client with valid key
+                self.client.api_key = api_key
 
             # For mock clients, use the create method directly
             create_fn = self.client.chat.completions.with_raw_response.create
